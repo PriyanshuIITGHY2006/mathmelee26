@@ -1,6 +1,7 @@
 // app/admin/login/page.tsx
 "use client";
 
+import Image from "next/image";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, Suspense } from "react";
@@ -16,7 +17,7 @@ function LoadingFallback() {
 
 // 2. The main login logic
 function LoginContent() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
@@ -35,9 +36,13 @@ function LoginContent() {
     <main className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <span className="text-sm font-medium tracking-tight text-slate-900">
-            Competition<span className="text-slate-400 font-normal">2025</span>
-          </span>
+          <div className="flex items-center gap-2.5 justify-center">
+            <div className="w-7 h-7 rounded-lg overflow-hidden bg-slate-900 shrink-0">
+              <Image src="/logo.jpeg" alt="Polygon" width={28} height={28} className="w-full h-full object-cover" />
+            </div>
+            <span className="text-sm font-semibold tracking-tight text-slate-900">Mathematics Melee</span>
+            <span className="text-xs font-medium text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-sm">'26</span>
+          </div>
           <h1 className="text-xl font-medium text-slate-900 mt-6 mb-1">
             Admin access
           </h1>

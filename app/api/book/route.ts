@@ -63,15 +63,15 @@ export async function POST(req: NextRequest) {
           );
         }
 
-        // 3. Check for duplicate booking (same email + slot)
+        // 3. Check for duplicate booking — one booking per WhatsApp number globally
         const existingBooking = await tx.booking.findFirst({
-          where: { slotId, email },
+          where: { whatsapp },
         });
-        
+
         if (existingBooking) {
           throw new BookingError(
             "DUPLICATE_BOOKING",
-            "You have already booked this slot."
+            "This WhatsApp number has already been used to register. Each participant may only book once."
           );
         }
 
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
       },
       {
         isolationLevel: "Serializable",
-        timeout: 10_000, // 10 seconds max
+        timeout: 5_000,
       }
     );
 
@@ -105,8 +105,13 @@ export async function POST(req: NextRequest) {
     }
 
     console.error("[/api/book] Unexpected error:", err);
+    const isTimeout = err instanceof Error && err.message.toLowerCase().includes("timeout");
     return NextResponse.json(
-      { error: "An unexpected error occurred. Please try again." },
+      {
+        error: isTimeout
+          ? "The server is busy right now. Please wait a moment and try again."
+          : "An unexpected error occurred. Please try again.",
+      },
       { status: 500 }
     );
   }

@@ -25,6 +25,7 @@ export async function GET(req: NextRequest) {
     capacity: slot.capacity,
     bookingCount: slot._count.bookings,
     meetingLink: slot.meetingLink,
+    interviewer: slot.interviewer,
   }));
 
   return NextResponse.json({ slots: formattedSlots });
@@ -37,6 +38,7 @@ const CreateSlotSchema = z.object({
   endTime: z.string().regex(/^\d{2}:\d{2}$/),
   meetingLink: z.string().url().optional().or(z.literal("")),
   capacity: z.number().int().min(1).max(20),
+  interviewer: z.string().max(100).optional().or(z.literal("")),
 });
 
 export async function POST(req: NextRequest) {
@@ -60,7 +62,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { date, startTime, endTime, meetingLink, capacity } = parsed.data;
+  const { date, startTime, endTime, meetingLink, capacity, interviewer } = parsed.data;
 
   const slot = await prisma.slot.create({
     data: {
@@ -69,6 +71,7 @@ export async function POST(req: NextRequest) {
       endTime,
       meetingLink: meetingLink || null,
       capacity,
+      interviewer: interviewer || null,
     },
   });
 

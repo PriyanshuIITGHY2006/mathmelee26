@@ -32,6 +32,8 @@ export async function GET(req: NextRequest) {
       capacity: slot.capacity,
       bookingCount: slot._count.bookings,
       meetingLink: slot.meetingLink,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      interviewer: (slot as any).interviewer ?? null,
       bookings: slot.bookings.map((b) => ({
         id: b.id,
         name: b.name,

@@ -41,6 +41,7 @@ const EditSlotSchema = z.object({
   meetingLink: z.string().url().optional().or(z.literal("")),
   capacity: z.number().int().min(1).max(20).optional(),
   delayMinutes: z.number().int().min(1).max(300).optional(),
+  interviewer: z.string().max(100).optional().or(z.literal("")),
 });
 
 export async function PATCH(
@@ -72,7 +73,7 @@ export async function PATCH(
     );
   }
 
-  const { date, startTime, endTime, meetingLink, capacity, delayMinutes } = parsed.data;
+  const { date, startTime, endTime, meetingLink, capacity, delayMinutes, interviewer } = parsed.data;
 
   let newStartTime = startTime ?? slot.startTime;
   let newEndTime = endTime ?? slot.endTime;
@@ -90,6 +91,7 @@ export async function PATCH(
       endTime: newEndTime,
       ...(meetingLink !== undefined && { meetingLink: meetingLink || null }),
       ...(capacity && { capacity }),
+      ...(interviewer !== undefined && { interviewer: interviewer || null }),
     },
   });
 
@@ -101,6 +103,8 @@ export async function PATCH(
       endTime: updated.endTime,
       capacity: updated.capacity,
       meetingLink: updated.meetingLink,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      interviewer: (updated as any).interviewer ?? null,
     },
     delayApplied: delayMinutes ?? null,
   });

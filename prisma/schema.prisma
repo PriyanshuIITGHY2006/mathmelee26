@@ -5,8 +5,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // ─── NextAuth Tables ────────────────────────────────────────────────────────
@@ -72,6 +73,7 @@ model Slot {
   endTime     String                     // "10:00"
   meetingLink String?                    // Google Meet URL
   capacity    Int      @default(6)
+  interviewer String?                    // Name of the interviewer assigned to this slot
   bookings    Booking[]
 
   createdAt   DateTime @default(now())
@@ -90,8 +92,8 @@ model Booking {
 
   createdAt DateTime @default(now())
 
+  @@unique([whatsapp])
   @@index([slotId])
-  @@index([email])
 }
 
 enum Role {

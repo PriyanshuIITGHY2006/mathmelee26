@@ -24,6 +24,7 @@ interface Slot {
   capacity: number;
   bookingCount: number;
   meetingLink: string | null;
+  interviewer: string | null;
   bookings: Booking[];
 }
 
@@ -58,7 +59,7 @@ export default function AdminDashboardPage() {
 
   if (status === "loading" || status === "unauthenticated") {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="w-4 h-4 border-2 border-slate-300 border-t-slate-900 rounded-full animate-spin" />
       </div>
     );
@@ -73,10 +74,12 @@ export default function AdminDashboardPage() {
       {/* Sidebar */}
       <aside className="w-52 bg-white border-r border-slate-200 flex flex-col py-5 px-3 shrink-0">
         <div className="px-2 mb-6">
-          <span className="text-sm font-medium tracking-tight text-slate-900">
-            Booking<span className="text-slate-400 font-normal">Portal</span>
+          <span className="text-sm font-semibold tracking-tight text-slate-900">
+            Mathematics Melee
           </span>
-          <p className="text-xs text-slate-400 mt-0.5">Admin</p>
+          <span className="text-xs font-medium text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-sm mt-1 inline-block">
+            '26 Admin
+          </span>
         </div>
 
         <nav className="flex flex-col gap-0.5">
@@ -94,7 +97,6 @@ export default function AdminDashboardPage() {
           />
         </nav>
 
-        {/* Stats */}
         <div className="mt-6 mx-2 p-3 bg-slate-50 rounded-lg border border-slate-100">
           <p className="text-xs text-slate-400 mb-2 uppercase tracking-wider">Overview</p>
           <div className="space-y-1.5">
@@ -127,11 +129,7 @@ export default function AdminDashboardPage() {
       {/* Main Content */}
       <main className="flex-1 overflow-auto">
         {activeView === "slots" ? (
-          <SlotManagementView
-            slots={slots}
-            loading={loading}
-            onRefresh={fetchSlots}
-          />
+          <SlotManagementView slots={slots} loading={loading} onRefresh={fetchSlots} />
         ) : (
           <ParticipantView slots={slots} loading={loading} onRefresh={fetchSlots} />
         )}
@@ -157,6 +155,7 @@ function SlotManagementView({
     endTime: "10:00",
     meetingLink: "",
     capacity: "6",
+    interviewer: "",
   });
   const [generatingLink, setGeneratingLink] = useState(false);
   const [creating, setCreating] = useState(false);
@@ -181,11 +180,7 @@ function SlotManagementView({
       const res = await fetch("/api/admin/generate-meet", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          date: form.date,
-          startTime: form.startTime,
-          endTime: form.endTime,
-        }),
+        body: JSON.stringify({ date: form.date, startTime: form.startTime, endTime: form.endTime }),
       });
       const data = await res.json();
       if (res.ok) {
@@ -210,15 +205,12 @@ function SlotManagementView({
       const res = await fetch("/api/slots", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...form,
-          capacity: parseInt(form.capacity),
-        }),
+        body: JSON.stringify({ ...form, capacity: parseInt(form.capacity) }),
       });
       const data = await res.json();
       if (res.ok) {
         setMessage({ type: "success", text: "Slot created successfully." });
-        setForm({ date: "", startTime: "09:00", endTime: "10:00", meetingLink: "", capacity: "6" });
+        setForm({ date: "", startTime: "09:00", endTime: "10:00", meetingLink: "", capacity: "6", interviewer: "" });
         onRefresh();
       } else {
         setMessage({ type: "error", text: data.error ?? "Failed to create slot." });
@@ -264,7 +256,7 @@ function SlotManagementView({
     }
   }
 
-  async function saveEdit(slotId: string, updates: Partial<Slot & { meetingLink: string }>) {
+  async function saveEdit(slotId: string, updates: Record<string, unknown>) {
     const res = await fetch(`/api/slots/${slotId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -279,7 +271,6 @@ function SlotManagementView({
     }
   }
 
-  // Group slots by date
   const slotsByDate = slots.reduce<Record<string, Slot[]>>((acc, slot) => {
     if (!acc[slot.date]) acc[slot.date] = [];
     acc[slot.date].push(slot);
@@ -290,7 +281,7 @@ function SlotManagementView({
     <div className="p-7">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-lg font-medium text-slate-900">Slot Management</h1>
+          <h1 className="text-lg font-semibold text-slate-900">Slot Management</h1>
           <p className="text-xs text-slate-400 mt-0.5">{slots.length} slots total</p>
         </div>
       </div>
@@ -302,64 +293,46 @@ function SlotManagementView({
         <div className="grid grid-cols-3 gap-3 mb-3">
           <div>
             <label className="block text-xs text-slate-500 mb-1.5 uppercase tracking-wider">Date</label>
-            <input
-              type="date"
-              value={form.date}
-              onChange={(e) => updateForm("date", e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
-            />
+            <input type="date" value={form.date} onChange={(e) => updateForm("date", e.target.value)}
+              className="w-full px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900" />
           </div>
           <div>
             <label className="block text-xs text-slate-500 mb-1.5 uppercase tracking-wider">Start time</label>
-            <input
-              type="time"
-              value={form.startTime}
-              onChange={(e) => updateForm("startTime", e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
-            />
+            <input type="time" value={form.startTime} onChange={(e) => updateForm("startTime", e.target.value)}
+              className="w-full px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900" />
           </div>
           <div>
             <label className="block text-xs text-slate-500 mb-1.5 uppercase tracking-wider">End time</label>
-            <input
-              type="time"
-              value={form.endTime}
-              onChange={(e) => updateForm("endTime", e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
-            />
+            <input type="time" value={form.endTime} onChange={(e) => updateForm("endTime", e.target.value)}
+              className="w-full px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900" />
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-3 mb-4">
+        <div className="grid grid-cols-3 gap-3 mb-3">
           <div className="col-span-2">
             <label className="block text-xs text-slate-500 mb-1.5 uppercase tracking-wider">Meeting link</label>
             <div className="flex gap-2">
-              <input
-                type="url"
-                value={form.meetingLink}
-                onChange={(e) => updateForm("meetingLink", e.target.value)}
+              <input type="url" value={form.meetingLink} onChange={(e) => updateForm("meetingLink", e.target.value)}
                 placeholder="https://meet.google.com/..."
-                className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-900"
-              />
-              <button
-                onClick={generateMeetLink}
-                disabled={generatingLink}
-                className="px-3 py-2 text-xs border border-slate-200 rounded-md text-slate-600 hover:bg-slate-50 transition-colors whitespace-nowrap disabled:opacity-50"
-              >
+                className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-900" />
+              <button onClick={generateMeetLink} disabled={generatingLink}
+                className="px-3 py-2 text-xs border border-slate-200 rounded-md text-slate-600 hover:bg-slate-50 transition-colors whitespace-nowrap disabled:opacity-50">
                 {generatingLink ? "Generating..." : "Auto-generate"}
               </button>
             </div>
           </div>
           <div>
             <label className="block text-xs text-slate-500 mb-1.5 uppercase tracking-wider">Capacity</label>
-            <input
-              type="number"
-              min="1"
-              max="20"
-              value={form.capacity}
-              onChange={(e) => updateForm("capacity", e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
-            />
+            <input type="number" min="1" max="20" value={form.capacity} onChange={(e) => updateForm("capacity", e.target.value)}
+              className="w-full px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900" />
           </div>
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-xs text-slate-500 mb-1.5 uppercase tracking-wider">Interviewer name</label>
+          <input type="text" value={form.interviewer} onChange={(e) => updateForm("interviewer", e.target.value)}
+            placeholder="e.g. Dr. Sharma"
+            className="w-full px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-900" />
         </div>
 
         {message && (
@@ -372,16 +345,13 @@ function SlotManagementView({
           </p>
         )}
 
-        <button
-          onClick={createSlot}
-          disabled={creating}
-          className="bg-slate-900 text-white text-xs font-medium px-4 py-2.5 rounded-md hover:bg-slate-700 transition-colors disabled:opacity-50"
-        >
+        <button onClick={createSlot} disabled={creating}
+          className="bg-slate-900 text-white text-xs font-medium px-4 py-2.5 rounded-md hover:bg-slate-700 transition-colors disabled:opacity-50">
           {creating ? "Creating..." : "Create Slot"}
         </button>
       </div>
 
-      {/* Slots Table grouped by date */}
+      {/* Slots grouped by date */}
       {loading ? (
         <div className="space-y-3">
           {[1, 2].map((i) => (
@@ -405,6 +375,7 @@ function SlotManagementView({
                 <thead>
                   <tr className="border-b border-slate-100">
                     <th className="text-left px-5 py-2.5 text-xs font-medium text-slate-400 uppercase tracking-wider">Time</th>
+                    <th className="text-left px-5 py-2.5 text-xs font-medium text-slate-400 uppercase tracking-wider">Interviewer</th>
                     <th className="text-left px-5 py-2.5 text-xs font-medium text-slate-400 uppercase tracking-wider">Booked</th>
                     <th className="text-left px-5 py-2.5 text-xs font-medium text-slate-400 uppercase tracking-wider">Meet link</th>
                     <th className="text-left px-5 py-2.5 text-xs font-medium text-slate-400 uppercase tracking-wider">Status</th>
@@ -418,9 +389,14 @@ function SlotManagementView({
                     return (
                       <tr key={slot.id} className="border-b border-slate-100 last:border-0">
                         <td className="px-5 py-3.5">
-                          <p className="font-medium text-slate-900">
-                            {slot.startTime} – {slot.endTime}
-                          </p>
+                          <p className="font-medium text-slate-900">{slot.startTime} – {slot.endTime}</p>
+                        </td>
+                        <td className="px-5 py-3.5">
+                          {slot.interviewer ? (
+                            <span className="text-sm text-slate-700">{slot.interviewer}</span>
+                          ) : (
+                            <span className="text-xs text-slate-300 italic">Unassigned</span>
+                          )}
                         </td>
                         <td className="px-5 py-3.5 text-slate-600">
                           {slot.bookingCount} / {slot.capacity}
@@ -428,11 +404,11 @@ function SlotManagementView({
                         <td className="px-5 py-3.5">
                           {slot.meetingLink ? (
                             <a href={slot.meetingLink} target="_blank" rel="noopener noreferrer"
-                              className="text-xs text-blue-600 hover:underline truncate max-w-[160px] block">
+                              className="text-xs text-blue-600 hover:underline truncate max-w-[140px] block">
                               {slot.meetingLink.replace("https://", "")}
                             </a>
                           ) : (
-                            <span className="text-xs text-slate-300">None</span>
+                            <span className="text-xs text-slate-300">—</span>
                           )}
                         </td>
                         <td className="px-5 py-3.5">
@@ -441,32 +417,27 @@ function SlotManagementView({
                             : isEmpty ? "bg-slate-100 text-slate-500"
                             : "bg-emerald-50 text-emerald-700"
                           }`}>
-                            {isFull ? "Sold Out" : isEmpty ? "Empty" : "Open"}
+                            {isFull ? "Full" : isEmpty ? "Empty" : "Open"}
                           </span>
                         </td>
                         <td className="px-5 py-3.5">
                           <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => setEditingSlot(slot)}
-                              className="text-xs text-slate-500 hover:text-slate-900 border border-slate-200 px-2 py-1 rounded-md hover:bg-slate-50 transition-colors"
-                            >
+                            <button onClick={() => setEditingSlot(slot)}
+                              className="text-xs text-slate-500 hover:text-slate-900 border border-slate-200 px-2 py-1 rounded-md hover:bg-slate-50 transition-colors">
                               Edit
                             </button>
-                            <button
-                              onClick={() => setDelaySlot(slot)}
-                              className="text-xs text-amber-600 hover:text-amber-800 border border-amber-100 px-2 py-1 rounded-md hover:bg-amber-50 transition-colors"
-                            >
+                            <button onClick={() => setDelaySlot(slot)}
+                              className="text-xs text-amber-600 hover:text-amber-800 border border-amber-100 px-2 py-1 rounded-md hover:bg-amber-50 transition-colors">
                               Delay
                             </button>
                             <button
                               onClick={() => {
-                                if (confirm(`Delete this slot? ${slot.bookingCount > 0 ? `This will also remove ${slot.bookingCount} booking(s).` : ""}`)) {
+                                if (confirm(`Delete this slot?${slot.bookingCount > 0 ? ` This removes ${slot.bookingCount} booking(s).` : ""}`)) {
                                   deleteSlot(slot.id);
                                 }
                               }}
                               disabled={deletingId === slot.id}
-                              className="text-xs text-red-500 hover:text-red-700 border border-red-100 px-2 py-1 rounded-md hover:bg-red-50 transition-colors disabled:opacity-50"
-                            >
+                              className="text-xs text-red-500 hover:text-red-700 border border-red-100 px-2 py-1 rounded-md hover:bg-red-50 transition-colors disabled:opacity-50">
                               {deletingId === slot.id ? "..." : "Delete"}
                             </button>
                           </div>
@@ -481,16 +452,10 @@ function SlotManagementView({
         </div>
       )}
 
-      {/* Edit Modal */}
       {editingSlot && (
-        <EditSlotModal
-          slot={editingSlot}
-          onSave={saveEdit}
-          onClose={() => setEditingSlot(null)}
-        />
+        <EditSlotModal slot={editingSlot} onSave={saveEdit} onClose={() => setEditingSlot(null)} />
       )}
 
-      {/* Delay Modal */}
       {delaySlot && (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-xl border border-slate-200 p-6 w-full max-w-sm shadow-xl">
@@ -498,51 +463,38 @@ function SlotManagementView({
             <p className="text-xs text-slate-500 mb-4">
               Shift {delaySlot.startTime} – {delaySlot.endTime} forward by:
             </p>
-            <div className="flex gap-2 mb-4">
+            <div className="flex gap-2 mb-4 flex-wrap">
               {["5", "10", "15", "20", "30", "45", "60"].map((min) => (
-                <button
-                  key={min}
-                  onClick={() => setDelayMinutes(min)}
+                <button key={min} onClick={() => setDelayMinutes(min)}
                   className={`text-xs px-2.5 py-1.5 rounded-md border transition-colors ${
                     delayMinutes === min
                       ? "bg-slate-900 text-white border-slate-900"
                       : "border-slate-200 text-slate-600 hover:bg-slate-50"
-                  }`}
-                >
+                  }`}>
                   {min}m
                 </button>
               ))}
             </div>
             <div className="mb-4">
-              <label className="text-xs text-slate-500 block mb-1">Or enter custom minutes</label>
-              <input
-                type="number"
-                min="1"
-                max="300"
-                value={delayMinutes}
+              <label className="text-xs text-slate-500 block mb-1">Custom minutes</label>
+              <input type="number" min="1" max="300" value={delayMinutes}
                 onChange={(e) => setDelayMinutes(e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-900"
-              />
+                className="w-full px-3 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-900" />
             </div>
             <p className="text-xs text-slate-400 mb-4">
-              New time will be:{" "}
+              New time:{" "}
               <span className="text-slate-700 font-medium">
                 {addMinutesToTime(delaySlot.startTime, parseInt(delayMinutes) || 0)} –{" "}
                 {addMinutesToTime(delaySlot.endTime, parseInt(delayMinutes) || 0)}
               </span>
             </p>
             <div className="flex gap-2">
-              <button
-                onClick={applyDelay}
-                disabled={applyingDelay}
-                className="flex-1 bg-slate-900 text-white text-xs font-medium py-2.5 rounded-md hover:bg-slate-700 transition-colors disabled:opacity-50"
-              >
+              <button onClick={applyDelay} disabled={applyingDelay}
+                className="flex-1 bg-slate-900 text-white text-xs font-medium py-2.5 rounded-md hover:bg-slate-700 transition-colors disabled:opacity-50">
                 {applyingDelay ? "Applying..." : "Apply Delay"}
               </button>
-              <button
-                onClick={() => setDelaySlot(null)}
-                className="px-4 text-xs text-slate-500 border border-slate-200 rounded-md hover:bg-slate-50 transition-colors"
-              >
+              <button onClick={() => setDelaySlot(null)}
+                className="px-4 text-xs text-slate-500 border border-slate-200 rounded-md hover:bg-slate-50 transition-colors">
                 Cancel
               </button>
             </div>
@@ -564,22 +516,17 @@ function EditSlotModal({
   onSave: (id: string, updates: Record<string, unknown>) => void;
   onClose: () => void;
 }) {
+  const [date, setDate] = useState(slot.date);
   const [startTime, setStartTime] = useState(slot.startTime);
   const [endTime, setEndTime] = useState(slot.endTime);
   const [meetingLink, setMeetingLink] = useState(slot.meetingLink ?? "");
   const [capacity, setCapacity] = useState(String(slot.capacity));
-  const [date, setDate] = useState(slot.date);
+  const [interviewer, setInterviewer] = useState(slot.interviewer ?? "");
   const [saving, setSaving] = useState(false);
 
   async function handleSave() {
     setSaving(true);
-    await onSave(slot.id, {
-      date,
-      startTime,
-      endTime,
-      meetingLink,
-      capacity: parseInt(capacity),
-    });
+    onSave(slot.id, { date, startTime, endTime, meetingLink, capacity: parseInt(capacity), interviewer });
     setSaving(false);
   }
 
@@ -604,6 +551,12 @@ function EditSlotModal({
               <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)}
                 className="w-full px-3 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-900" />
             </div>
+          </div>
+          <div>
+            <label className="block text-xs text-slate-500 mb-1.5 uppercase tracking-wider">Interviewer name</label>
+            <input type="text" value={interviewer} onChange={(e) => setInterviewer(e.target.value)}
+              placeholder="e.g. Dr. Sharma"
+              className="w-full px-3 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-900 placeholder:text-slate-300" />
           </div>
           <div>
             <label className="block text-xs text-slate-500 mb-1.5 uppercase tracking-wider">Meeting link</label>
@@ -646,6 +599,7 @@ function ParticipantView({
   const [search, setSearch] = useState("");
   const [filterDate, setFilterDate] = useState("all");
   const [removingId, setRemovingId] = useState<string | null>(null);
+  const [downloading, setDownloading] = useState(false);
 
   const uniqueDates = Array.from(new Set(slots.map((s) => s.date))).sort();
 
@@ -657,17 +611,17 @@ function ParticipantView({
         (b) =>
           b.name.toLowerCase().includes(search.toLowerCase()) ||
           b.email.toLowerCase().includes(search.toLowerCase()) ||
-          (b.whatsapp && b.whatsapp.includes(search)) // <-- Added WhatsApp search
+          b.whatsapp.includes(search)
       );
     return matchesDate && (matchesSearch || s.bookings.length === 0);
   });
 
+  const totalBookings = slots.reduce((sum, s) => sum + s.bookingCount, 0);
+
   async function removeParticipant(bookingId: string) {
     setRemovingId(bookingId);
     try {
-      const res = await fetch(`/api/admin/bookings/${bookingId}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(`/api/admin/bookings/${bookingId}`, { method: "DELETE" });
       if (res.ok) {
         onRefresh();
       } else {
@@ -679,35 +633,46 @@ function ParticipantView({
     }
   }
 
-  const totalBookings = slots.reduce((sum, s) => sum + s.bookingCount, 0);
+  async function downloadExcel() {
+    setDownloading(true);
+    try {
+      const res = await fetch("/api/admin/export");
+      if (!res.ok) { alert("Export failed."); return; }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `mathematics-melee-26-${new Date().toISOString().slice(0, 10)}.xlsx`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setDownloading(false);
+    }
+  }
 
   return (
     <div className="p-7">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-lg font-medium text-slate-900">Participants</h1>
-          <p className="text-xs text-slate-400 mt-0.5">{totalBookings} total bookings</p>
+          <h1 className="text-lg font-semibold text-slate-900">Participants</h1>
+          <p className="text-xs text-slate-400 mt-0.5">{totalBookings} total registrations</p>
         </div>
-        <div className="flex gap-2">
-          <select
-            value={filterDate}
-            onChange={(e) => setFilterDate(e.target.value)}
-            className="text-xs px-3 py-2 border border-slate-200 rounded-md bg-white text-slate-700 focus:outline-none"
-          >
+        <div className="flex items-center gap-2">
+          <select value={filterDate} onChange={(e) => setFilterDate(e.target.value)}
+            className="text-xs px-3 py-2 border border-slate-200 rounded-md bg-white text-slate-700 focus:outline-none">
             <option value="all">All dates</option>
             {uniqueDates.map((d) => (
-              <option key={d} value={d}>
-                {format(parseISO(d), "MMMM d, yyyy")}
-              </option>
+              <option key={d} value={d}>{format(parseISO(d), "MMMM d, yyyy")}</option>
             ))}
           </select>
-          <input
-            type="text"
-            placeholder="Search name or email"
-            value={search}
+          <input type="text" placeholder="Search name, email, WA" value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="text-xs px-3 py-2 border border-slate-200 rounded-md bg-white text-slate-700 placeholder:text-slate-300 focus:outline-none w-48"
-          />
+            className="text-xs px-3 py-2 border border-slate-200 rounded-md bg-white text-slate-700 placeholder:text-slate-300 focus:outline-none w-44" />
+          <button onClick={downloadExcel} disabled={downloading}
+            className="flex items-center gap-1.5 text-xs px-3 py-2 bg-slate-900 text-white rounded-md hover:bg-slate-700 transition-colors disabled:opacity-50 font-medium whitespace-nowrap">
+            <DownloadIcon />
+            {downloading ? "Exporting..." : "Export Excel"}
+          </button>
         </div>
       </div>
 
@@ -718,23 +683,29 @@ function ParticipantView({
           </div>
         ) : filtered.length === 0 ? (
           <div className="bg-white border border-slate-200 rounded-xl p-8 text-center text-xs text-slate-400">
-            No results found.
+            No results.
           </div>
         ) : (
           filtered.map((slot) => (
             <div key={slot.id} className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-              <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
+              <div className="px-5 py-3.5 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-slate-900">
-                    {format(parseISO(slot.date), "EEEE, MMMM d, yyyy")} &middot;{" "}
-                    {slot.startTime} – {slot.endTime}
+                    {format(parseISO(slot.date), "EEEE, MMMM d, yyyy")} &middot; {slot.startTime} – {slot.endTime}
                   </p>
-                  {slot.meetingLink && (
-                    <a href={slot.meetingLink} target="_blank" rel="noopener noreferrer"
-                      className="text-xs text-blue-500 hover:underline mt-0.5 block">
-                      {slot.meetingLink.replace("https://", "")}
-                    </a>
-                  )}
+                  <div className="flex items-center gap-3 mt-0.5">
+                    {slot.interviewer && (
+                      <span className="text-xs text-slate-500">
+                        Interviewer: <span className="font-medium text-slate-700">{slot.interviewer}</span>
+                      </span>
+                    )}
+                    {slot.meetingLink && (
+                      <a href={slot.meetingLink} target="_blank" rel="noopener noreferrer"
+                        className="text-xs text-blue-500 hover:underline">
+                        {slot.meetingLink.replace("https://", "")}
+                      </a>
+                    )}
+                  </div>
                 </div>
                 <span className="text-xs text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">
                   {slot.bookingCount} / {slot.capacity}
@@ -750,8 +721,7 @@ function ParticipantView({
                       <th className="text-left px-5 py-2 text-xs font-medium text-slate-400 uppercase tracking-wider">#</th>
                       <th className="text-left px-5 py-2 text-xs font-medium text-slate-400 uppercase tracking-wider">Name</th>
                       <th className="text-left px-5 py-2 text-xs font-medium text-slate-400 uppercase tracking-wider">Email</th>
-                      {/* NEW WHATSAPP HEADER */}
-                      <th className="text-left px-5 py-2 text-xs font-medium text-slate-400 uppercase tracking-wider">WhatsApp</th> 
+                      <th className="text-left px-5 py-2 text-xs font-medium text-slate-400 uppercase tracking-wider">WhatsApp</th>
                       <th className="text-left px-5 py-2 text-xs font-medium text-slate-400 uppercase tracking-wider">Booked at</th>
                       <th className="text-left px-5 py-2 text-xs font-medium text-slate-400 uppercase tracking-wider">Action</th>
                     </tr>
@@ -762,21 +732,17 @@ function ParticipantView({
                         <td className="px-5 py-3 text-xs text-slate-400">{i + 1}</td>
                         <td className="px-5 py-3 font-medium text-slate-900">{booking.name}</td>
                         <td className="px-5 py-3 text-slate-600">{booking.email}</td>
-                        {/* NEW WHATSAPP DATA ROW */}
-                        <td className="px-5 py-3 text-slate-600">{booking.whatsapp}</td> 
+                        <td className="px-5 py-3 text-slate-600">{booking.whatsapp}</td>
                         <td className="px-5 py-3 text-xs text-slate-400">
                           {format(new Date(booking.createdAt), "MMM d, HH:mm")}
                         </td>
                         <td className="px-5 py-3">
                           <button
                             onClick={() => {
-                              if (confirm(`Remove ${booking.name} from this slot?`)) {
-                                removeParticipant(booking.id);
-                              }
+                              if (confirm(`Remove ${booking.name}?`)) removeParticipant(booking.id);
                             }}
                             disabled={removingId === booking.id}
-                            className="text-xs text-red-500 hover:text-red-700 border border-red-100 px-2 py-1 rounded-md hover:bg-red-50 transition-colors disabled:opacity-50"
-                          >
+                            className="text-xs text-red-500 hover:text-red-700 border border-red-100 px-2 py-1 rounded-md hover:bg-red-50 transition-colors disabled:opacity-50">
                             {removingId === booking.id ? "..." : "Remove"}
                           </button>
                         </td>
@@ -793,7 +759,7 @@ function ParticipantView({
   );
 }
 
-// ─── Sidebar Components ───────────────────────────────────────────────────────
+// ─── Sidebar ──────────────────────────────────────────────────────────────────
 
 function SidebarItem({ label, active, onClick, icon }: {
   label: string; active: boolean; onClick: () => void; icon: React.ReactNode;
@@ -808,14 +774,12 @@ function SidebarItem({ label, active, onClick, icon }: {
   );
 }
 
-// ─── Utility ─────────────────────────────────────────────────────────────────
+// ─── Utilities ────────────────────────────────────────────────────────────────
 
 function addMinutesToTime(time: string, minutes: number): string {
   const [h, m] = time.split(":").map(Number);
   const total = h * 60 + m + minutes;
-  const newH = Math.floor(total / 60) % 24;
-  const newM = total % 60;
-  return `${String(newH).padStart(2, "0")}:${String(newM).padStart(2, "0")}`;
+  return `${String(Math.floor(total / 60) % 24).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
 }
 
 // ─── Icons ───────────────────────────────────────────────────────────────────
@@ -840,6 +804,14 @@ function LogoutIcon() {
   return (
     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+    </svg>
+  );
+}
+
+function DownloadIcon() {
+  return (
+    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
     </svg>
   );
 }
