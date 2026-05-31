@@ -1,7 +1,10 @@
 // app/api/book/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { format } from "date-fns";
 import prisma from "@/lib/prisma";
+import { sendConfirmationEmail } from "@/lib/email";
+import { getRegistrationsOpen } from "@/lib/settings";
 
 const BookingSchema = z.object({
   slotId: z.string().min(1),
@@ -26,7 +29,16 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { slotId, name, email, whatsapp } = parsed.data; // <-- Extract it here
+  const { slotId, name, email, whatsapp } = parsed.data;
+
+  // Check if registrations are open
+  const isOpen = await getRegistrationsOpen();
+  if (!isOpen) {
+    return NextResponse.json(
+      { error: "Registrations are currently closed. Please contact the organisers." },
+      { status: 403 }
+    );
+  }
 
   try {
     const booking = await prisma.$transaction(
@@ -86,6 +98,23 @@ export async function POST(req: NextRequest) {
         timeout: 5_000,
       }
     );
+
+    // Send confirmation email after transaction — non-blocking
+    const slot = await prisma.slot.findUnique({ where: { id: booking.slotId } });
+    if (slot) {
+      sendConfirmationEmail({
+        to: booking.email,
+        name: booking.name,
+        date: format(slot.date, "MMMM d, yyyy"),
+        day: format(slot.date, "EEEE"),
+        startTime: slot.startTime,
+        endTime: slot.endTime,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        interviewer: (slot as any).interviewer ?? null,
+        bookingId: booking.id,
+        meetingLink: slot.meetingLink,
+      });
+    }
 
     return NextResponse.json(
       { success: true, bookingId: booking.id },

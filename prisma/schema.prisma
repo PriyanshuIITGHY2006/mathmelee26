@@ -96,6 +96,11 @@ model Booking {
   @@index([slotId])
 }
 
+model AppSetting {
+  key   String @id
+  value String
+}
+
 enum Role {
   ADMIN
 }

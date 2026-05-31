@@ -45,7 +45,8 @@ export default async function ConfirmationPage({ params }: Props) {
             Booking confirmed
           </h1>
           <p className="text-sm text-slate-500 text-center mb-7">
-            Take a screenshot to save your booking details.
+            A confirmation has been sent to{" "}
+            <span className="text-slate-700 font-medium">{booking.email}</span>
           </p>
 
           {/* Meet link */}
@@ -92,13 +93,16 @@ export default async function ConfirmationPage({ params }: Props) {
             ))}
           </div>
 
-          <div className="mt-7 pt-6 border-t border-slate-100 text-center">
-            <Link
-              href="/"
-              className="text-xs text-slate-400 hover:text-slate-700 transition-colors"
-            >
+          <div className="mt-7 pt-6 border-t border-slate-100 text-center space-y-2">
+            <Link href="/" className="text-xs text-slate-400 hover:text-slate-700 transition-colors block">
               Return to home
             </Link>
+            <p className="text-xs text-slate-300">
+              Made a mistake?{" "}
+              <a href="mailto:priyanshuib01@gmail.com" className="underline underline-offset-2 hover:text-slate-500 transition-colors">
+                Contact the organisers
+              </a>{" "}to cancel and re-register.
+            </p>
           </div>
         </div>
       </div>

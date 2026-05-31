@@ -38,6 +38,8 @@ export default function AdminDashboardPage() {
   const [slots, setSlots] = useState<Slot[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeView, setActiveView] = useState<ActiveView>("slots");
+  const [registrationsOpen, setRegistrationsOpen] = useState(true);
+  const [togglingReg, setTogglingReg] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") router.replace("/admin/login");
@@ -54,8 +56,25 @@ export default function AdminDashboardPage() {
   }, []);
 
   useEffect(() => {
-    if (status === "authenticated") fetchSlots();
+    if (status === "authenticated") {
+      fetchSlots();
+      fetch("/api/admin/settings")
+        .then((r) => r.json())
+        .then((d) => setRegistrationsOpen(d.registrationsOpen ?? true));
+    }
   }, [status, fetchSlots]);
+
+  async function toggleRegistrations() {
+    setTogglingReg(true);
+    const next = !registrationsOpen;
+    await fetch("/api/admin/settings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ registrationsOpen: next }),
+    });
+    setRegistrationsOpen(next);
+    setTogglingReg(false);
+  }
 
   if (status === "loading" || status === "unauthenticated") {
     return (
@@ -115,7 +134,30 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        <div className="mt-auto">
+        <div className="mt-auto space-y-1">
+          {/* Registrations toggle */}
+          <div className="mx-2 mb-2">
+            <div className={`rounded-lg border p-3 ${registrationsOpen ? "bg-emerald-50 border-emerald-100" : "bg-red-50 border-red-100"}`}>
+              <p className="text-xs font-medium mb-2 flex items-center gap-1.5">
+                <span className={`w-1.5 h-1.5 rounded-full ${registrationsOpen ? "bg-emerald-500" : "bg-red-400"}`} />
+                <span className={registrationsOpen ? "text-emerald-700" : "text-red-600"}>
+                  {registrationsOpen ? "Registrations Open" : "Registrations Closed"}
+                </span>
+              </p>
+              <button
+                onClick={toggleRegistrations}
+                disabled={togglingReg}
+                className={`w-full text-xs font-medium py-1.5 rounded-md transition-colors disabled:opacity-50 ${
+                  registrationsOpen
+                    ? "bg-red-100 text-red-700 hover:bg-red-200"
+                    : "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
+                }`}
+              >
+                {togglingReg ? "Updating..." : registrationsOpen ? "Close Registrations" : "Open Registrations"}
+              </button>
+            </div>
+          </div>
+
           <button
             onClick={() => signOut({ callbackUrl: "/admin/login" })}
             className="w-full text-left px-2 py-2 text-xs text-slate-400 hover:text-slate-700 transition-colors flex items-center gap-2"
@@ -162,6 +204,7 @@ function SlotManagementView({
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [editingSlot, setEditingSlot] = useState<Slot | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [sendingMeetId, setSendingMeetId] = useState<string | null>(null);
   const [delaySlot, setDelaySlot] = useState<Slot | null>(null);
   const [delayMinutes, setDelayMinutes] = useState("15");
   const [applyingDelay, setApplyingDelay] = useState(false);
@@ -217,6 +260,20 @@ function SlotManagementView({
       }
     } finally {
       setCreating(false);
+    }
+  }
+
+  async function sendMeetLink(slotId: string, bookingCount: number) {
+    if (bookingCount === 0) { alert("No participants in this slot."); return; }
+    if (!confirm(`Send meet link to all ${bookingCount} participant(s) in this slot?`)) return;
+    setSendingMeetId(slotId);
+    try {
+      const res = await fetch(`/api/admin/slots/${slotId}/send-meet`, { method: "POST" });
+      const data = await res.json();
+      if (res.ok) alert(`Meet link sent to ${data.sent} participant(s).`);
+      else alert(data.error ?? "Failed to send.");
+    } finally {
+      setSendingMeetId(null);
     }
   }
 
@@ -421,7 +478,7 @@ function SlotManagementView({
                           </span>
                         </td>
                         <td className="px-5 py-3.5">
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 flex-wrap">
                             <button onClick={() => setEditingSlot(slot)}
                               className="text-xs text-slate-500 hover:text-slate-900 border border-slate-200 px-2 py-1 rounded-md hover:bg-slate-50 transition-colors">
                               Edit
@@ -429,6 +486,13 @@ function SlotManagementView({
                             <button onClick={() => setDelaySlot(slot)}
                               className="text-xs text-amber-600 hover:text-amber-800 border border-amber-100 px-2 py-1 rounded-md hover:bg-amber-50 transition-colors">
                               Delay
+                            </button>
+                            <button
+                              onClick={() => sendMeetLink(slot.id, slot.bookingCount)}
+                              disabled={!slot.meetingLink || sendingMeetId === slot.id}
+                              title={!slot.meetingLink ? "No meet link set" : `Send meet link to ${slot.bookingCount} participant(s)`}
+                              className="text-xs text-blue-600 hover:text-blue-800 border border-blue-100 px-2 py-1 rounded-md hover:bg-blue-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+                              {sendingMeetId === slot.id ? "Sending..." : "Send Meet"}
                             </button>
                             <button
                               onClick={() => {

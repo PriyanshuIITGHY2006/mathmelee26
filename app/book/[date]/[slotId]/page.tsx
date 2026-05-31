@@ -41,6 +41,21 @@ export default function BookingFormPage() {
     e.preventDefault();
     if (!name.trim() || !email.trim() || !whatsapp.trim()) return;
 
+    // Basic email format check before hitting the server
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+
+    // WhatsApp must be 10 digits
+    const waRegex = /^\d{10}$/;
+    if (!waRegex.test(whatsapp.trim())) {
+      setError("WhatsApp number must be exactly 10 digits, no spaces or country code.");
+      return;
+    }
+
     setSubmitting(true);
     setError("");
 
@@ -194,6 +209,9 @@ export default function BookingFormPage() {
                 placeholder="jane@example.com"
                 className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg bg-white text-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition"
               />
+              <p className="text-xs text-amber-600 mt-1">
+                Type carefully — your confirmation email will be sent here.
+              </p>
             </div>
 
             <div>
@@ -229,6 +247,12 @@ export default function BookingFormPage() {
 
             <p className="text-xs text-slate-400 text-center">
               Each participant may only register once.
+            </p>
+            <p className="text-xs text-slate-400 text-center">
+              Made a mistake?{" "}
+              <a href="mailto:priyanshuib01@gmail.com" className="underline underline-offset-2 hover:text-slate-700 transition-colors">
+                Contact the organisers
+              </a>{" "}to cancel and re-register.
             </p>
           </form>
         </div>
