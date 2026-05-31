@@ -99,27 +99,31 @@ export async function POST(req: NextRequest) {
       }
     );
 
-    // Send confirmation email after transaction — non-blocking
-    const slot = await prisma.slot.findUnique({ where: { id: booking.slotId } });
-    if (slot) {
-      sendConfirmationEmail({
-        to: booking.email,
-        name: booking.name,
-        date: format(slot.date, "MMMM d, yyyy"),
-        day: format(slot.date, "EEEE"),
-        startTime: slot.startTime,
-        endTime: slot.endTime,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        interviewer: (slot as any).interviewer ?? null,
-        bookingId: booking.id,
-        meetingLink: slot.meetingLink,
-      });
-    }
-
-    return NextResponse.json(
+    // Respond immediately — email runs after response is sent
+    const response = NextResponse.json(
       { success: true, bookingId: booking.id },
       { status: 201 }
     );
+
+    // Fire email completely outside the request lifecycle
+    prisma.slot.findUnique({ where: { id: booking.slotId } }).then((slot) => {
+      if (slot) {
+        sendConfirmationEmail({
+          to: booking.email,
+          name: booking.name,
+          date: format(slot.date, "MMMM d, yyyy"),
+          day: format(slot.date, "EEEE"),
+          startTime: slot.startTime,
+          endTime: slot.endTime,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          interviewer: (slot as any).interviewer ?? null,
+          bookingId: booking.id,
+          meetingLink: slot.meetingLink,
+        });
+      }
+    });
+
+    return response;
   } catch (err) {
     if (err instanceof BookingError) {
       const statusMap: Record<string, number> = {
