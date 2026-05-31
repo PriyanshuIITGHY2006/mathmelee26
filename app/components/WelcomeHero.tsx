@@ -96,7 +96,7 @@ export function WelcomeHero() {
         <div className="anim-pop d-500 inline-flex items-center gap-2 border border-slate-200 bg-white rounded-full px-4 py-1.5 mb-8">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
           <span className="text-xs font-medium tracking-widest text-slate-500 uppercase">
-            Supremum Round · Now Open
+            Supremum Round &middot; Registrations Open
           </span>
         </div>
 
@@ -125,20 +125,20 @@ export function WelcomeHero() {
         {/* Book your session divider */}
         <div className="anim-fade-in d-800 flex items-center gap-3 mb-6 justify-center">
           <span className="h-px w-12 bg-slate-200" />
-          <span className="text-slate-300 text-xs tracking-widest uppercase">Book your session</span>
+          <span className="text-slate-300 text-xs tracking-widest uppercase">Claim your interval</span>
           <span className="h-px w-12 bg-slate-200" />
         </div>
 
         <div className="anim-fade-up d-800">
           <p className="text-sm text-slate-500 leading-relaxed mb-10 max-w-sm mx-auto">
-            Select a date on the calendar below to reserve your interview slot.
-            Spots are limited and allocated on a first-come, first-served basis.
+            Select a date below to register for your panel session.
+            Each slot is finite — allocated on a first-come, first-served basis.
           </p>
         </div>
 
         {/* Scroll cue */}
         <div className="anim-fade-in d-1000 flex flex-col items-center gap-1">
-          <span className="text-xs text-slate-400 tracking-widest uppercase">Select a date</span>
+          <span className="text-xs text-slate-400 tracking-widest uppercase">Choose your interval</span>
           <span className="anim-bounce text-slate-400 text-lg mt-1">↓</span>
         </div>
       </div>

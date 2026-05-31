@@ -51,7 +51,7 @@ export default function DateSlotsPage() {
             {format(parsedDate, "EEEE, MMMM d")}
           </h1>
           <p className="text-sm text-slate-500 mt-1">
-            Select a time slot to continue.
+            Choose your interval below. Slots are finite.
           </p>
         </div>
 
@@ -84,7 +84,7 @@ export default function DateSlotsPage() {
                       {slot.startTime} — {slot.endTime}
                     </p>
                     <p className="text-xs text-slate-400 mt-0.5">
-                      {isFull ? "No spots remaining" : `${remaining} spot${remaining === 1 ? "" : "s"} available`}
+                      {isFull ? "No vacancies" : remaining === 1 ? "Last element" : `${remaining} vacancies`}
                     </p>
                   </div>
                   <div className="flex items-center gap-4">

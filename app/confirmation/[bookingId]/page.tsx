@@ -42,10 +42,10 @@ export default async function ConfirmationPage({ params }: Props) {
           </div>
 
           <h1 className="text-xl font-semibold text-slate-900 text-center mb-1">
-            Booking confirmed
+            Element registered
           </h1>
           <p className="text-sm text-slate-500 text-center mb-7">
-            A confirmation has been sent to{" "}
+            Confirmation sent to{" "}
             <span className="text-slate-700 font-medium">{booking.email}</span>
           </p>
 

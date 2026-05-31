@@ -190,7 +190,7 @@ export function CalendarView({ dates }: { dates: SlotDate[] }) {
           <div className="px-5 py-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
             <div>
               <p className="text-xs text-slate-400 uppercase tracking-widest mb-0.5">
-                Available slots
+                Available intervals
               </p>
               <p className="text-sm font-semibold text-slate-900">
                 {format(parseISO(selectedDate), "EEEE, MMMM d")}
@@ -251,10 +251,10 @@ export function CalendarView({ dates }: { dates: SlotDate[] }) {
                         }`}
                       >
                         {isFull
-                          ? "No spots remaining"
+                          ? "No vacancies"
                           : isLast
-                          ? "Last spot"
-                          : `${remaining} spots left`}
+                          ? "Last vacancy"
+                          : `${remaining} vacancies`}
                       </p>
                     </div>
                     <button
@@ -268,7 +268,7 @@ export function CalendarView({ dates }: { dates: SlotDate[] }) {
                           : "bg-slate-900 text-white hover:bg-slate-700"
                       }`}
                     >
-                      {isFull ? "Full" : "Book →"}
+                      {isFull ? "Full" : "Register →"}
                     </button>
                   </div>
                 );

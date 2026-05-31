@@ -131,10 +131,10 @@ export default function BookingFormPage() {
 
       <div className="mb-6">
         <h1 className="text-2xl font-semibold tracking-tight text-slate-900 mb-1">
-          Complete your booking
+          Register your element
         </h1>
         <p className="text-sm text-slate-500">
-          Fill in your details to confirm your spot.
+          Fill in your details to claim your spot in the partition.
         </p>
       </div>
 
@@ -159,10 +159,10 @@ export default function BookingFormPage() {
               }`}
             >
               {remaining === 0
-                ? "No spots left"
+                ? "No vacancies"
                 : remaining === 1
-                ? "Last spot"
-                : `${remaining} spots left`}
+                ? "Last vacancy — act now"
+                : `${remaining} vacancies`}
             </p>
           </div>
         </div>
@@ -242,11 +242,11 @@ export default function BookingFormPage() {
               disabled={submitting}
               className="w-full bg-slate-900 text-white text-sm font-medium py-2.5 rounded-lg hover:bg-slate-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed mt-1"
             >
-              {submitting ? "Confirming…" : "Confirm Booking"}
+              {submitting ? "Registering…" : "Register my Element"}
             </button>
 
             <p className="text-xs text-slate-400 text-center">
-              Each participant may only register once.
+              Each participant belongs to exactly one partition.
             </p>
             <p className="text-xs text-slate-400 text-center">
               Made a mistake?{" "}
