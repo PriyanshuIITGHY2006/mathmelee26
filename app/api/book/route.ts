@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { format } from "date-fns";
+import { waitUntil } from "@vercel/functions";
 import prisma from "@/lib/prisma";
 import { sendConfirmationEmail } from "@/lib/email";
 import { getRegistrationsOpen } from "@/lib/settings";
@@ -99,31 +100,30 @@ export async function POST(req: NextRequest) {
       }
     );
 
-    // Respond immediately — email runs after response is sent
-    const response = NextResponse.json(
+    // waitUntil keeps the serverless function alive until email is sent
+    waitUntil(
+      prisma.slot.findUnique({ where: { id: booking.slotId } }).then((slot) => {
+        if (slot) {
+          return sendConfirmationEmail({
+            to: booking.email,
+            name: booking.name,
+            date: format(slot.date, "MMMM d, yyyy"),
+            day: format(slot.date, "EEEE"),
+            startTime: slot.startTime,
+            endTime: slot.endTime,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            interviewer: (slot as any).interviewer ?? null,
+            bookingId: booking.id,
+            meetingLink: slot.meetingLink,
+          });
+        }
+      })
+    );
+
+    return NextResponse.json(
       { success: true, bookingId: booking.id },
       { status: 201 }
     );
-
-    // Fire email completely outside the request lifecycle
-    prisma.slot.findUnique({ where: { id: booking.slotId } }).then((slot) => {
-      if (slot) {
-        sendConfirmationEmail({
-          to: booking.email,
-          name: booking.name,
-          date: format(slot.date, "MMMM d, yyyy"),
-          day: format(slot.date, "EEEE"),
-          startTime: slot.startTime,
-          endTime: slot.endTime,
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          interviewer: (slot as any).interviewer ?? null,
-          bookingId: booking.id,
-          meetingLink: slot.meetingLink,
-        });
-      }
-    });
-
-    return response;
   } catch (err) {
     if (err instanceof BookingError) {
       const statusMap: Record<string, number> = {
