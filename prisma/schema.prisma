@@ -74,6 +74,7 @@ model Slot {
   meetingLink String?                    // Google Meet URL
   capacity    Int      @default(6)
   interviewer String?                    // Name of the interviewer assigned to this slot
+  published   Boolean  @default(true)    // Whether this panel is visible/bookable by participants
   bookings    Booking[]
 
   createdAt   DateTime @default(now())

@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Slot" ADD COLUMN IF NOT EXISTS "published" BOOLEAN NOT NULL DEFAULT true;
