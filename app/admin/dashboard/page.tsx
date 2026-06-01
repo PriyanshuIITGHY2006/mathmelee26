@@ -25,6 +25,7 @@ interface Slot {
   bookingCount: number;
   meetingLink: string | null;
   interviewer: string | null;
+  published: boolean;
   bookings: Booking[];
 }
 
@@ -204,6 +205,7 @@ function SlotManagementView({
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [editingSlot, setEditingSlot] = useState<Slot | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [togglingPublishId, setTogglingPublishId] = useState<string | null>(null);
   const [sendingMeetId, setSendingMeetId] = useState<string | null>(null);
   const [delaySlot, setDelaySlot] = useState<Slot | null>(null);
   const [delayMinutes, setDelayMinutes] = useState("15");
@@ -274,6 +276,31 @@ function SlotManagementView({
       else alert(data.error ?? "Failed to send.");
     } finally {
       setSendingMeetId(null);
+    }
+  }
+
+  async function togglePublish(slot: Slot) {
+    const next = !slot.published;
+    // Holding (unpublishing) is only allowed when the panel has no bookings.
+    if (!next && slot.bookingCount > 0) {
+      alert("Cannot hold a panel that already has bookings. Move or remove participants first.");
+      return;
+    }
+    setTogglingPublishId(slot.id);
+    try {
+      const res = await fetch(`/api/slots/${slot.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ published: next }),
+      });
+      if (res.ok) {
+        onRefresh();
+      } else {
+        const data = await res.json();
+        alert(data.error ?? "Failed to update panel.");
+      }
+    } finally {
+      setTogglingPublishId(null);
     }
   }
 
@@ -469,19 +496,37 @@ function SlotManagementView({
                           )}
                         </td>
                         <td className="px-5 py-3.5">
-                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                            isFull ? "bg-red-50 text-red-600"
-                            : isEmpty ? "bg-slate-100 text-slate-500"
-                            : "bg-emerald-50 text-emerald-700"
-                          }`}>
-                            {isFull ? "Full" : isEmpty ? "Empty" : "Open"}
-                          </span>
+                          <div className="flex items-center gap-1.5">
+                            {!slot.published && (
+                              <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-amber-50 text-amber-700">
+                                Held
+                              </span>
+                            )}
+                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                              isFull ? "bg-red-50 text-red-600"
+                              : isEmpty ? "bg-slate-100 text-slate-500"
+                              : "bg-emerald-50 text-emerald-700"
+                            }`}>
+                              {isFull ? "Full" : isEmpty ? "Empty" : "Open"}
+                            </span>
+                          </div>
                         </td>
                         <td className="px-5 py-3.5">
                           <div className="flex items-center gap-2 flex-wrap">
                             <button onClick={() => setEditingSlot(slot)}
                               className="text-xs text-slate-500 hover:text-slate-900 border border-slate-200 px-2 py-1 rounded-md hover:bg-slate-50 transition-colors">
                               Edit
+                            </button>
+                            <button
+                              onClick={() => togglePublish(slot)}
+                              disabled={togglingPublishId === slot.id || (slot.published && slot.bookingCount > 0)}
+                              title={slot.published && slot.bookingCount > 0 ? "Cannot hold a panel with bookings" : slot.published ? "Hide this panel from participants" : "Make this panel bookable"}
+                              className={`text-xs px-2 py-1 rounded-md border transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${
+                                slot.published
+                                  ? "text-amber-600 hover:text-amber-800 border-amber-100 hover:bg-amber-50"
+                                  : "text-emerald-600 hover:text-emerald-800 border-emerald-100 hover:bg-emerald-50"
+                              }`}>
+                              {togglingPublishId === slot.id ? "..." : slot.published ? "Hold" : "Publish"}
                             </button>
                             <button onClick={() => setDelaySlot(slot)}
                               className="text-xs text-amber-600 hover:text-amber-800 border border-amber-100 px-2 py-1 rounded-md hover:bg-amber-50 transition-colors">

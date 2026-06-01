@@ -9,7 +9,10 @@ import { z } from "zod";
 export async function GET(req: NextRequest) {
   const dateParam = req.nextUrl.searchParams.get("date");
   
-  const whereClause = dateParam ? { date: new Date(dateParam) } : {};
+  const whereClause = {
+    published: true,
+    ...(dateParam ? { date: new Date(dateParam) } : {}),
+  };
 
   const slots = await prisma.slot.findMany({
     where: whereClause,

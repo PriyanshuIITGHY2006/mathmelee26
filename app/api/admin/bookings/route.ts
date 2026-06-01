@@ -34,6 +34,8 @@ export async function GET(req: NextRequest) {
       meetingLink: slot.meetingLink,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interviewer: (slot as any).interviewer ?? null,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      published: (slot as any).published ?? true,
       bookings: slot.bookings.map((b) => ({
         id: b.id,
         name: b.name,
