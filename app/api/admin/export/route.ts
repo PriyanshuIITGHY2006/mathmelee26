@@ -26,7 +26,9 @@ export async function GET(_req: NextRequest) {
     Interviewer: (slot as any).interviewer ?? "—",
     "Spots Used": slot.bookings.length,
     Capacity: slot.capacity,
-    Status: slot.bookings.length >= slot.capacity ? "Full" : "Open",
+    Status: slot.bookings.length >= slot.capacity ? "Full" : slot.bookings.length === 0 ? "Empty" : "Open",
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Visibility: (slot as any).published === false ? "Held" : "Published",
   }));
 
   // Sheet 2: All participants
