@@ -664,6 +664,7 @@ function ParticipantView({
   const [filterDate, setFilterDate] = useState("all");
   const [removingId, setRemovingId] = useState<string | null>(null);
   const [downloading, setDownloading] = useState(false);
+  const [movingBooking, setMovingBooking] = useState<{ booking: Booking; slot: Slot } | null>(null);
 
   const uniqueDates = Array.from(new Set(slots.map((s) => s.date))).sort();
 
@@ -694,6 +695,21 @@ function ParticipantView({
       }
     } finally {
       setRemovingId(null);
+    }
+  }
+
+  async function moveParticipant(bookingId: string, targetSlotId: string) {
+    const res = await fetch(`/api/admin/bookings/${bookingId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ slotId: targetSlotId }),
+    });
+    if (res.ok) {
+      setMovingBooking(null);
+      onRefresh();
+    } else {
+      const data = await res.json();
+      alert(data.error ?? "Failed to move participant.");
     }
   }
 
@@ -801,14 +817,21 @@ function ParticipantView({
                           {format(new Date(booking.createdAt), "MMM d, HH:mm")}
                         </td>
                         <td className="px-5 py-3">
-                          <button
-                            onClick={() => {
-                              if (confirm(`Remove ${booking.name}?`)) removeParticipant(booking.id);
-                            }}
-                            disabled={removingId === booking.id}
-                            className="text-xs text-red-500 hover:text-red-700 border border-red-100 px-2 py-1 rounded-md hover:bg-red-50 transition-colors disabled:opacity-50">
-                            {removingId === booking.id ? "..." : "Remove"}
-                          </button>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => setMovingBooking({ booking, slot })}
+                              className="text-xs text-slate-500 hover:text-slate-900 border border-slate-200 px-2 py-1 rounded-md hover:bg-slate-50 transition-colors">
+                              Move
+                            </button>
+                            <button
+                              onClick={() => {
+                                if (confirm(`Remove ${booking.name}?`)) removeParticipant(booking.id);
+                              }}
+                              disabled={removingId === booking.id}
+                              className="text-xs text-red-500 hover:text-red-700 border border-red-100 px-2 py-1 rounded-md hover:bg-red-50 transition-colors disabled:opacity-50">
+                              {removingId === booking.id ? "..." : "Remove"}
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -818,6 +841,100 @@ function ParticipantView({
             </div>
           ))
         )}
+      </div>
+
+      {movingBooking && (
+        <MoveParticipantModal
+          booking={movingBooking.booking}
+          currentSlot={movingBooking.slot}
+          slots={slots}
+          onMove={moveParticipant}
+          onClose={() => setMovingBooking(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+// ─── Move Participant Modal ───────────────────────────────────────────────────
+
+function MoveParticipantModal({
+  booking,
+  currentSlot,
+  slots,
+  onMove,
+  onClose,
+}: {
+  booking: Booking;
+  currentSlot: Slot;
+  slots: Slot[];
+  onMove: (bookingId: string, targetSlotId: string) => Promise<void>;
+  onClose: () => void;
+}) {
+  const [targetSlotId, setTargetSlotId] = useState("");
+  const [moving, setMoving] = useState(false);
+
+  // Slots the participant can be moved into: not the current one, and not full.
+  const targets = slots
+    .filter((s) => s.id !== currentSlot.id && s.bookingCount < s.capacity)
+    .sort((a, b) =>
+      a.date === b.date ? a.startTime.localeCompare(b.startTime) : a.date.localeCompare(b.date)
+    );
+
+  async function handleMove() {
+    if (!targetSlotId) return;
+    setMoving(true);
+    try {
+      await onMove(booking.id, targetSlotId);
+    } finally {
+      setMoving(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 px-4">
+      <div className="bg-white rounded-xl border border-slate-200 p-6 w-full max-w-md shadow-xl">
+        <h3 className="text-sm font-medium text-slate-900 mb-1">Move participant</h3>
+        <p className="text-xs text-slate-500 mb-4">
+          Move <span className="font-medium text-slate-700">{booking.name}</span> from{" "}
+          {format(parseISO(currentSlot.date), "MMM d")} · {currentSlot.startTime}–{currentSlot.endTime} to another slot.
+        </p>
+
+        {targets.length === 0 ? (
+          <p className="text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-md px-3 py-3 mb-4">
+            No other slots with available capacity.
+          </p>
+        ) : (
+          <div className="mb-4">
+            <label className="block text-xs text-slate-500 mb-1.5 uppercase tracking-wider">Target slot</label>
+            <select
+              value={targetSlotId}
+              onChange={(e) => setTargetSlotId(e.target.value)}
+              className="w-full px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900">
+              <option value="">Select a slot…</option>
+              {targets.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {format(parseISO(s.date), "MMM d")} · {s.startTime}–{s.endTime}
+                  {s.interviewer ? ` · ${s.interviewer}` : ""} ({s.bookingCount}/{s.capacity})
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        <div className="flex gap-2">
+          <button
+            onClick={handleMove}
+            disabled={moving || !targetSlotId}
+            className="flex-1 bg-slate-900 text-white text-xs font-medium py-2.5 rounded-md hover:bg-slate-700 transition-colors disabled:opacity-50">
+            {moving ? "Moving..." : "Move Participant"}
+          </button>
+          <button
+            onClick={onClose}
+            className="px-4 text-xs text-slate-500 border border-slate-200 rounded-md hover:bg-slate-50 transition-colors">
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   );
