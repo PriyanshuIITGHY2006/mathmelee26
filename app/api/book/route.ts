@@ -50,11 +50,12 @@ export async function POST(req: NextRequest) {
           Array<{
             id: string;
             capacity: number;
+            published: boolean;
           }>
         >`
-          SELECT id, capacity 
-          FROM "Slot" 
-          WHERE id = ${slotId} 
+          SELECT id, capacity, published
+          FROM "Slot"
+          WHERE id = ${slotId}
           FOR UPDATE
         `;
 
@@ -63,6 +64,11 @@ export async function POST(req: NextRequest) {
         }
 
         const slot = lockedSlots[0];
+
+        // Held (unpublished) panels are not open for booking.
+        if (slot.published === false) {
+          throw new BookingError("SLOT_NOT_FOUND", "This slot is not available for booking.");
+        }
 
         // 2. Safely count the bookings now that the parent row is locked
         const bookingCount = await tx.booking.count({

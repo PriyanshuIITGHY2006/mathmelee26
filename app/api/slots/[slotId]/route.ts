@@ -16,7 +16,9 @@ export async function GET(
     include: { _count: { select: { bookings: true } } },
   });
 
-  if (!slot) {
+  // Hide unpublished (held) panels from participants — treat as not found.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (!slot || (slot as any).published === false) {
     return NextResponse.json({ error: "Slot not found." }, { status: 404 });
   }
 
@@ -42,6 +44,7 @@ const EditSlotSchema = z.object({
   capacity: z.number().int().min(1).max(20).optional(),
   delayMinutes: z.number().int().min(1).max(300).optional(),
   interviewer: z.string().max(100).optional().or(z.literal("")),
+  published: z.boolean().optional(),
 });
 
 export async function PATCH(
@@ -73,7 +76,18 @@ export async function PATCH(
     );
   }
 
-  const { date, startTime, endTime, meetingLink, capacity, delayMinutes, interviewer } = parsed.data;
+  const { date, startTime, endTime, meetingLink, capacity, delayMinutes, interviewer, published } = parsed.data;
+
+  // A panel can only be unpublished (held) when it has no bookings — i.e. it is free.
+  if (published === false) {
+    const bookingCount = await prisma.booking.count({ where: { slotId: params.slotId } });
+    if (bookingCount > 0) {
+      return NextResponse.json(
+        { error: "Cannot hold a panel that already has bookings. Move or remove participants first." },
+        { status: 409 }
+      );
+    }
+  }
 
   let newStartTime = startTime ?? slot.startTime;
   let newEndTime = endTime ?? slot.endTime;
@@ -92,6 +106,7 @@ export async function PATCH(
       ...(meetingLink !== undefined && { meetingLink: meetingLink || null }),
       ...(capacity && { capacity }),
       ...(interviewer !== undefined && { interviewer: interviewer || null }),
+      ...(published !== undefined && { published }),
     },
   });
 
@@ -105,6 +120,8 @@ export async function PATCH(
       meetingLink: updated.meetingLink,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interviewer: (updated as any).interviewer ?? null,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      published: (updated as any).published ?? true,
     },
     delayApplied: delayMinutes ?? null,
   });
