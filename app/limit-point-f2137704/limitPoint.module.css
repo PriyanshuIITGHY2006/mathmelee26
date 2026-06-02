@@ -1,0 +1,139 @@
+/* The Limit Point — hidden teaser page */
+.wrap {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: #f4f1ea;
+  color: #1b1a17;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+.frame {
+  position: absolute;
+  inset: clamp(14px, 2.2vw, 26px);
+  border: 1px solid #d9d4c9;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* floating math motifs */
+.motif {
+  position: absolute;
+  color: #1b1a17;
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
+  z-index: 1;
+  animation: floaty 9s ease-in-out infinite;
+  will-change: transform;
+}
+@keyframes floaty {
+  0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
+  50%      { transform: translateY(-12px) rotate(var(--r, 0deg)); }
+}
+@media (max-width: 720px) { .motif { display: none; } }
+
+/* brand */
+.brand {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  padding-top: clamp(34px, 6vh, 62px);
+  animation: fade 0.9s ease both;
+}
+.logo {
+  width: 34px; height: 34px; border-radius: 8px; object-fit: cover;
+  display: inline-block;
+}
+.nm {
+  font-family: var(--font-caps), sans-serif; font-weight: 600;
+  letter-spacing: 0.3em; font-size: 13px; text-transform: uppercase; margin-top: 13px;
+}
+.sub {
+  font-family: var(--font-caps), sans-serif; font-weight: 500; font-size: 10px;
+  letter-spacing: 0.24em; text-transform: uppercase; color: #8a877e; margin-top: 8px;
+}
+
+/* center column */
+.center {
+  position: relative;
+  z-index: 5;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: clamp(24px, 5vh, 60px) clamp(20px, 5vw, 60px);
+  gap: 0;
+}
+
+.diagram { width: min(560px, 86vw); height: auto; margin-bottom: clamp(40px, 8vh, 90px); animation: fade 1s ease both; }
+.axisLine { stroke: #d9d4c9; stroke-width: 1; }
+.epsBox { fill: rgba(176,125,46,0.05); stroke: rgba(176,125,46,0.32); stroke-width: 1; }
+.xn { fill: #f4f1ea; stroke: #1b1a17; stroke-width: 1.4; opacity: 0.55; }
+.xlab, .epsLab, .lLab { font-family: var(--font-mono), monospace; }
+.xlab { fill: #8a877e; font-size: 12px; }
+.epsLab { fill: #b07d2e; font-size: 13px; }
+.lLab { fill: #b07d2e; font-size: 18px; font-weight: 600; }
+
+.eyebrow {
+  font-family: var(--font-caps), sans-serif; font-weight: 500; font-size: clamp(10px, 1.1vw, 12px);
+  letter-spacing: 0.36em; text-transform: uppercase; color: #8a877e;
+  display: flex; align-items: center; justify-content: center; gap: 16px;
+  margin-bottom: clamp(14px, 2.5vh, 22px);
+  animation: fadeUp 0.9s ease 0.05s both;
+}
+.bar { width: 30px; height: 1px; background: #d9d4c9; display: inline-block; }
+
+.title {
+  font-family: var(--font-script), cursive;
+  font-size: clamp(64px, 12vw, 150px);
+  line-height: 0.95; letter-spacing: 0; color: #1b1a17; font-weight: 400;
+  margin: 0; animation: fadeUp 1s ease 0.1s both;
+}
+
+.tagline {
+  font-family: var(--font-serif), Georgia, serif; font-weight: 400;
+  font-size: clamp(19px, 2.4vw, 27px); color: #37352f;
+  margin-top: clamp(18px, 3vh, 26px); line-height: 1.5; max-width: 30ch;
+  animation: fadeUp 1s ease 0.2s both;
+}
+.tagline b { font-weight: 700; color: #b07d2e; }
+
+.defn {
+  font-family: var(--font-mono), monospace; font-weight: 400;
+  font-size: clamp(11px, 1.3vw, 13px); color: #8a877e;
+  margin-top: clamp(16px, 2.4vh, 22px);
+  animation: fadeUp 1s ease 0.3s both;
+}
+
+.cta {
+  font-family: var(--font-ui), sans-serif; font-weight: 600; font-size: 14px;
+  text-decoration: none; color: #f4f1ea; background: #1b1a17;
+  padding: 16px 38px; border-radius: 9px; margin-top: clamp(28px, 5vh, 44px);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  animation: fadeUp 1s ease 0.4s both;
+}
+.cta:hover { transform: translateY(-2px); background: #000; box-shadow: 0 10px 30px rgba(27,26,23,0.22); }
+
+.meta {
+  font-family: var(--font-caps), sans-serif; font-weight: 500; margin-top: clamp(16px, 2.4vh, 22px);
+  font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #8a877e;
+  animation: fadeUp 1s ease 0.5s both;
+}
+
+.foot {
+  position: relative; z-index: 5; text-align: center;
+  padding-bottom: clamp(28px, 5vh, 54px);
+  font-family: var(--font-caps), sans-serif; font-weight: 500; font-size: 10.5px;
+  letter-spacing: 0.22em; text-transform: uppercase; color: #b3afa4;
+  animation: fade 1.2s ease both;
+}
+
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) {
+  .motif, .brand, .center, .diagram, .eyebrow, .title, .tagline, .defn, .cta, .meta, .foot { animation: none !important; }
+}
