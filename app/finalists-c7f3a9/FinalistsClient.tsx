@@ -8,40 +8,45 @@ import styles from "./finalists.module.css";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false });
 
-const script = localFont({ src: "../limit-point-f2137704/fonts/Pestapora.otf",   variable: "--ff-script", display: "swap" });
-const serif  = localFont({ src: [
+const script  = localFont({ src: "../limit-point-f2137704/fonts/Pestapora.otf",   variable: "--ff-script",  display: "swap" });
+const serif   = localFont({ src: [
   { path: "../limit-point-f2137704/fonts/CMUSerif-Roman.ttf", weight: "400", style: "normal" },
   { path: "../limit-point-f2137704/fonts/CMUSerif-Bold.ttf",  weight: "700", style: "normal" },
 ], variable: "--ff-serif", display: "swap" });
-const mono = localFont({ src: "../limit-point-f2137704/fonts/JetBrainsMono.ttf", variable: "--ff-mono",   display: "swap" });
-const caps = localFont({ src: "../limit-point-f2137704/fonts/Montserrat.ttf",    variable: "--ff-caps",   display: "swap" });
+const sans    = localFont({ src: [
+  { path: "../limit-point-f2137704/fonts/CMUSans-Regular.woff2", weight: "500", style: "normal" },
+  { path: "../limit-point-f2137704/fonts/CMUSans-Bold.woff2",    weight: "700", style: "normal" },
+  { path: "../limit-point-f2137704/fonts/CMUSans-Italic.woff2",  weight: "500", style: "italic" },
+], variable: "--ff-sans", display: "swap" });
+const mono    = localFont({ src: "../limit-point-f2137704/fonts/JetBrainsMono.ttf", variable: "--ff-mono",   display: "swap" });
+const caps    = localFont({ src: "../limit-point-f2137704/fonts/Montserrat.ttf",    variable: "--ff-caps",   display: "swap" });
 
 // ── Data ───────────────────────────────────────────────────────────────
 
 const CHAPTERS = [
   {
     num: "I",   name: "The Open Set",
-    dir: "ltr" as const,
+    dir: "ltr" as const, pathSide: null as null | "left" | "right",
     story: "Twenty-five points were lifted from the dense substrate of all applicants. Their membership in set F was axiomatically confirmed. A well-ordering was applied. None of them asked which.",
   },
   {
     num: "II",  name: "The Cauchy Crusade",
-    dir: "rtl" as const,
+    dir: "rtl" as const, pathSide: "right" as null | "left" | "right",
     story: "Armed with nothing but ε > 0, they marched into the problem sets. For every challenge hurled at them, they produced an N. Some wept. All converged. Absolutely.",
   },
   {
     num: "III", name: "The Continuous Path",
-    dir: "ltr" as const,
+    dir: "ltr" as const, pathSide: "left" as null | "left" | "right",
     story: "The road ahead was smooth — differentiable at every point, they claimed. The examiners were not convinced. The examiners were not wrong.",
   },
   {
     num: "IV",  name: "The Fixed Point Forest",
-    dir: "rtl" as const,
+    dir: "rtl" as const, pathSide: "right" as null | "left" | "right",
     story: "Banach's theorem guaranteed exactly one way out. A contraction mapping was applied. They found the exit. Whether they understood it remains a separate, ongoing investigation.",
   },
   {
     num: "V",   name: "The Limit Point",
-    dir: "ltr" as const,
+    dir: "ltr" as const, pathSide: "left" as null | "left" | "right",
     story: "Every open neighbourhood of this final destination contains at least one finalist. That finalist, if you are reading this, is you.",
   },
 ];
@@ -201,7 +206,7 @@ export default function FinalistsClient() {
   };
 
   return (
-    <main className={`${script.variable} ${serif.variable} ${mono.variable} ${caps.variable} ${styles.wrap}`}>
+    <main className={`${script.variable} ${serif.variable} ${sans.variable} ${mono.variable} ${caps.variable} ${styles.wrap}`}>
       <div className={styles.frame} aria-hidden />
 
       {MOTIFS.map((m, i) => (
@@ -223,9 +228,8 @@ export default function FinalistsClient() {
 
       {/* Hero */}
       <section className={styles.hero}>
-        <p className={styles.roundTag}>Round III · The Limit Point</p>
         <h1 className={styles.title}>The Finalists</h1>
-        <p className={styles.tagline}>Follow the path. Reveal the names.</p>
+        <p className={styles.tagline}>Round III · Follow the path. Reveal the names.</p>
         {!allFlipped && (
           <button className={styles.traverseBtn} onClick={traverseAll}>
             Traverse all &nbsp;<span className={styles.traverseMath}>∀n ∈ F</span>
@@ -260,15 +264,20 @@ export default function FinalistsClient() {
           {/* Chapters & nodes */}
           {CHAPTERS.map((ch, ci) => {
             const chNodes = NODES.slice(ci * 5, ci * 5 + 5);
+            const textCls = ch.pathSide === "right" ? styles.chTextOffRight
+                          : ch.pathSide === "left"  ? styles.chTextOffLeft
+                          : "";
             return (
               <div key={ci} className={styles.chBlock}>
 
-                {/* Chapter label */}
-                <div className={styles.chHead}>
-                  <span className={styles.chNum}>§ {ch.num}</span>
-                  <span className={styles.chName}>{ch.name}</span>
+                {/* Chapter label — shifts away from the incoming road curve */}
+                <div className={`${styles.chText} ${textCls}`}>
+                  <div className={styles.chHead}>
+                    <span className={styles.chNum}>§ {ch.num}</span>
+                    <span className={styles.chName}>{ch.name}</span>
+                  </div>
+                  <p className={styles.chStory}>{ch.story}</p>
                 </div>
-                <p className={styles.chStory}>{ch.story}</p>
 
                 {/* Node row */}
                 <div className={`${styles.row} ${ch.dir === "rtl" ? styles.rowRtl : ""}`}>

@@ -59,12 +59,6 @@
   padding: clamp(24px, 4vh, 50px) 24px clamp(16px, 3vh, 36px);
   animation: fadeUp 0.9s ease 0.08s both;
 }
-.roundTag {
-  font-family: var(--ff-mono), monospace;
-  font-size: 11px; letter-spacing: 0.12em; color: #b07d2e;
-  border: 1px solid rgba(201,160,86,0.45);
-  padding: 4px 13px; border-radius: 3px; margin-bottom: 20px;
-}
 .title {
   font-family: var(--ff-script), cursive;
   font-size: clamp(64px, 11vw, 140px);
@@ -72,10 +66,10 @@
   animation: fadeUp 1s ease 0.12s both;
 }
 .tagline {
-  /* Use Inter (global) for clean readable body text */
-  font-family: var(--font-inter, var(--ff-caps)), sans-serif;
-  font-size: clamp(15px, 1.7vw, 18px);
-  color: #6a6760; margin-top: 14px; font-weight: 400;
+  font-family: var(--ff-sans), sans-serif;
+  font-size: clamp(14px, 1.6vw, 17px);
+  font-weight: 500;
+  color: #7a7770; margin-top: 14px; letter-spacing: 0.01em;
   animation: fadeUp 1s ease 0.22s both;
 }
 .traverseBtn {
@@ -118,32 +112,48 @@
 }
 .chBlock:last-child { padding-bottom: 0; }
 
-/* Chapter header — no box, just labels */
-.chHead {
-  display: flex; align-items: baseline; gap: 12px;
-  margin-bottom: 7px;
+/* Chapter text wrapper — shifts away from the incoming road */
+.chText {
   padding-top: clamp(20px, 3.5vh, 38px);
+  margin-bottom: clamp(14px, 2.5vw, 24px);
 }
+/* Path enters from the right: push text to the left (add right padding) */
+.chTextOffRight {
+  padding-right: calc(var(--ns, 64px) * 1.5);
+}
+/* Path enters from the left: push text to the right + right-align */
+.chTextOffLeft {
+  padding-left: calc(var(--ns, 64px) * 1.5);
+  text-align: right;
+}
+
+.chHead {
+  display: flex; align-items: baseline; gap: 10px;
+  margin-bottom: 7px;
+}
+.chTextOffLeft .chHead { justify-content: flex-end; }
+
 .chNum {
   font-family: var(--ff-mono), monospace;
   font-size: 11px; color: #b07d2e; letter-spacing: 0.1em; flex-shrink: 0;
 }
 .chName {
-  font-family: var(--ff-serif), Georgia, serif;
-  font-size: clamp(18px, 2.6vw, 26px);
+  font-family: var(--ff-sans), sans-serif;
+  font-size: clamp(19px, 2.8vw, 28px);
   font-weight: 700; color: #1b1a17; line-height: 1;
 }
 
-/* Story text — Inter for clean readability, like the reference */
+/* Story — CMU Sans Serif, clean and readable */
 .chStory {
-  font-family: var(--font-inter, var(--ff-caps)), sans-serif;
-  font-size: clamp(13px, 1.4vw, 15px);
-  font-weight: 400;
-  color: #7a7770;
-  line-height: 1.7;
-  margin: 0 0 clamp(16px, 2.5vw, 26px);
-  max-width: 62ch;
+  font-family: var(--ff-sans), sans-serif;
+  font-size: clamp(13.5px, 1.5vw, 15.5px);
+  font-weight: 500;
+  color: #6e6b65;
+  line-height: 1.72;
+  margin: 0;
+  max-width: 58ch;
 }
+.chTextOffLeft .chStory { margin-left: auto; }
 
 /* ── Node row ────────────────────────────────── */
 .row {
@@ -248,12 +258,11 @@
 .bar { flex-shrink: 0; width: 36px; height: 1px; background: #ccc9bf; }
 
 .gateDesc {
-  /* Inter for readable body copy */
-  font-family: var(--font-inter, var(--ff-caps)), sans-serif;
-  font-size: clamp(16px, 1.9vw, 20px);
-  font-weight: 400;
+  font-family: var(--ff-sans), sans-serif;
+  font-size: clamp(15px, 1.8vw, 19px);
+  font-weight: 500;
   color: #37352f; text-align: center;
-  margin-bottom: clamp(16px, 2.8vh, 26px); line-height: 1.6;
+  margin-bottom: clamp(16px, 2.8vh, 26px); line-height: 1.65;
 }
 
 .editorWrap {
