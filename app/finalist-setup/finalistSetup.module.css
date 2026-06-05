@@ -1,0 +1,111 @@
+.wrap {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f4f1ea;
+  padding: 24px;
+}
+.frame {
+  position: fixed;
+  inset: clamp(10px, 1.8vw, 20px);
+  border: 1px solid #d9d4c9;
+  pointer-events: none;
+  z-index: 100;
+}
+.loading {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f4f1ea;
+  font-family: Georgia, serif;
+  color: #9a9690;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+}
+.card {
+  background: #fff;
+  border: 1px solid #e8e4dc;
+  border-radius: 16px;
+  padding: clamp(28px, 5vw, 48px) clamp(24px, 4vw, 44px);
+  width: min(460px, 100%);
+  box-shadow: 0 8px 40px rgba(27,26,23,0.08);
+}
+.eyebrow {
+  font-family: Georgia, serif;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #b07d2e;
+  margin: 0 0 10px;
+}
+.title {
+  font-family: Georgia, serif;
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 700;
+  color: #1b1a17;
+  margin: 0 0 6px;
+  line-height: 1.15;
+}
+.sub {
+  font-family: sans-serif;
+  font-size: 14px;
+  color: #9a9690;
+  margin: 0 0 28px;
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.label {
+  font-family: sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #9a9690;
+  font-weight: 600;
+}
+.input {
+  font-family: sans-serif;
+  font-size: 14px;
+  color: #1b1a17;
+  background: #f4f1ea;
+  border: 1px solid #d9d4c9;
+  border-radius: 8px;
+  padding: 11px 14px;
+  outline: none;
+  transition: border-color 0.15s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+.input:focus { border-color: #b07d2e; background: #fff; }
+.inputReadOnly { opacity: 0.65; cursor: default; }
+.error {
+  font-family: sans-serif;
+  font-size: 13px;
+  color: #c0392b;
+  margin: 0;
+}
+.btn {
+  font-family: sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #f4f1ea;
+  background: #1b1a17;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 24px;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: background 0.15s ease, transform 0.15s ease;
+  letter-spacing: 0.02em;
+}
+.btn:hover:not(:disabled) { background: #000; transform: translateY(-1px); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }

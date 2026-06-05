@@ -105,3 +105,26 @@ model AppSetting {
 enum Role {
   ADMIN
 }
+
+model AllowedFinalist {
+  id       String  @id @default(cuid())
+  email    String  @unique
+  name     String
+  college  String
+  whatsapp String?
+}
+
+model FinalistOtp {
+  email     String   @id
+  otp       String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model FinalistProfile {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  codeforcesId String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

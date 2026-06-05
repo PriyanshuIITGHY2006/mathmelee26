@@ -269,12 +269,57 @@ export async function sendMeetLinkEmail(params: MeetLinkEmailParams) {
       to: [{ email: to, name }],
       sender: {
         email: process.env.BREVO_FROM_EMAIL ?? "noreply@mathsmelee.app",
-        name: process.env.BREVO_FROM_NAME ?? "Mathematics Melee '26",
+        name: process.env.BREVO_FROM_NAME ?? "Mathematics Melee ‘26",
       },
-      subject: `Your Meet Link — Mathematics Melee ’26 · ${day}, ${date} ${startTime}`,
+      subject: `Your Meet Link — Mathematics Melee ‘26 · ${day}, ${date} ${startTime}`,
       htmlContent: html,
     });
   } catch (err) {
     console.error("[email] Failed to send meet link:", err);
+  }
+}
+
+export async function sendOtpEmail(to: string, name: string, otp: string) {
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Your OTP — Mathematics Melee</title></head>
+<body style="margin:0;padding:0;background:#f4f1ea">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f1ea;padding:40px 16px">
+  <tr><td align="center">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:480px">
+    <tr><td style="background:#1b1a17;border-radius:14px 14px 0 0;padding:28px 32px;text-align:center">
+      <p style="margin:0;font-family:Georgia,serif;font-size:10px;letter-spacing:0.3em;color:#6b6860;text-transform:uppercase">Mathematics Melee</p>
+      <p style="margin:6px 0 0;font-family:Georgia,serif;font-size:20px;color:#f4f1ea;letter-spacing:0.14em;text-transform:uppercase">The Limit Point</p>
+    </td></tr>
+    <tr><td style="background:#ffffff;border-left:1px solid #e8e4dc;border-right:1px solid #e8e4dc;padding:40px 36px;text-align:center">
+      <p style="margin:0 0 6px;font-family:Georgia,serif;font-size:15px;color:#37352f">Hi ${name},</p>
+      <p style="margin:0 0 28px;font-family:sans-serif;font-size:13px;color:#9a9690;line-height:1.6">Your one-time code to enter the Limit Point portal:</p>
+      <div style="background:#f4f1ea;border:1px solid #d9d4c9;border-radius:10px;padding:20px 32px;display:inline-block;margin-bottom:28px">
+        <span style="font-family:monospace;font-size:36px;font-weight:700;letter-spacing:0.18em;color:#1b1a17">${otp}</span>
+      </div>
+      <p style="margin:0;font-family:sans-serif;font-size:12px;color:#b3afa4">Expires in 10 minutes. Do not share this code.</p>
+    </td></tr>
+    <tr><td style="background:#1b1a17;border-radius:0 0 14px 14px;padding:20px 32px;text-align:center">
+      <p style="margin:0;font-family:sans-serif;font-size:10px;color:#4a4845;letter-spacing:0.14em;text-transform:uppercase">Polygon · IIT Guwahati · Summer 2026</p>
+    </td></tr>
+  </table>
+  </td></tr>
+</table>
+</body></html>`;
+
+  try {
+    await client.transactionalEmails.sendTransacEmail({
+      to: [{ email: to, name }],
+      sender: {
+        email: process.env.BREVO_FROM_EMAIL ?? "noreply@mathsmelee.app",
+        name: process.env.BREVO_FROM_NAME ?? "Mathematics Melee ‘26",
+      },
+      subject: `${otp} — Your Limit Point access code`,
+      htmlContent: html,
+    });
+  } catch (err) {
+    console.error("[email] Failed to send OTP:", err);
+    throw err;
   }
 }
