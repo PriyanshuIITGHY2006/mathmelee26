@@ -1,0 +1,129 @@
+.wrap {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f4f1ea;
+  padding: 24px;
+}
+.frame {
+  position: fixed;
+  inset: clamp(10px, 1.8vw, 20px);
+  border: 1px solid #d9d4c9;
+  pointer-events: none;
+  z-index: 100;
+}
+.loading {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f4f1ea;
+  font-family: Georgia, serif;
+  color: #9a9690;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+}
+.card {
+  background: #fff;
+  border: 1px solid #e8e4dc;
+  border-radius: 16px;
+  padding: clamp(36px, 5vw, 52px) clamp(28px, 4vw, 48px);
+  width: min(420px, 100%);
+  text-align: center;
+  box-shadow: 0 8px 40px rgba(27,26,23,0.08);
+}
+.avatar {
+  width: 72px; height: 72px;
+  background: #1b1a17;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: Georgia, serif;
+  font-size: 24px; font-weight: 700; color: #c9a056;
+  margin: 0 auto 16px;
+  letter-spacing: 0.04em;
+}
+.eyebrow {
+  font-family: Georgia, serif;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #b07d2e;
+  margin: 0 0 8px;
+}
+.name {
+  font-family: Georgia, serif;
+  font-size: clamp(22px, 3vw, 28px);
+  font-weight: 700;
+  color: #1b1a17;
+  margin: 0 0 4px;
+}
+.college {
+  font-family: sans-serif;
+  font-size: 13px;
+  color: #9a9690;
+  margin: 0;
+}
+.divider {
+  width: 40px; height: 1px;
+  background: #d9d4c9;
+  margin: 24px auto;
+}
+.dl {
+  text-align: left;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px 20px;
+  margin: 0 0 28px;
+}
+.dl dt {
+  font-family: sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #9a9690;
+  font-weight: 600;
+  padding-top: 2px;
+  white-space: nowrap;
+}
+.dl dd {
+  font-family: sans-serif;
+  font-size: 14px;
+  color: #1b1a17;
+  margin: 0;
+  word-break: break-all;
+}
+.cfLink {
+  color: #b07d2e;
+  text-decoration: none;
+  font-weight: 600;
+}
+.cfLink:hover { text-decoration: underline; }
+.missing { color: #b3afa4; font-size: 13px; }
+.setBtn {
+  background: none; border: none;
+  color: #b07d2e; cursor: pointer;
+  font-size: 13px; font-family: sans-serif;
+  padding: 0; text-decoration: underline;
+}
+.actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.editBtn {
+  font-family: sans-serif; font-size: 13px; font-weight: 600;
+  color: #1b1a17; background: #f4f1ea;
+  border: 1px solid #d9d4c9; border-radius: 7px;
+  padding: 10px 20px; cursor: pointer;
+  transition: background 0.15s ease;
+}
+.editBtn:hover { background: #e8e4dc; }
+.logoutBtn {
+  font-family: sans-serif; font-size: 13px; font-weight: 600;
+  color: #9a9690; background: none;
+  border: 1px solid #d9d4c9; border-radius: 7px;
+  padding: 10px 20px; cursor: pointer;
+  transition: all 0.15s ease;
+}
+.logoutBtn:hover { color: #1b1a17; border-color: #9a9690; }

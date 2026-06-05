@@ -3,6 +3,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import styles from "./limitPoint.module.css";
+import FinalistLogin from "./FinalistLogin";
 
 const script = localFont({ src: "./fonts/Pestapora.otf", variable: "--font-script", display: "swap" });
 const serif = localFont({
@@ -118,7 +119,7 @@ export default function LimitPointPage() {
           <b>You are that point.</b>
         </p>
         <p className={styles.defn}>∀ ε &gt; 0, every neighbourhood of greatness contains you.</p>
-        <a className={styles.cta} href="#">Enter the Limit Point →</a>
+        <FinalistLogin />
         <div className={styles.meta}>By Invitation · The Chosen Few</div>
       </section>
 

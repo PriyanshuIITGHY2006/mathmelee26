@@ -137,3 +137,66 @@
 @media (prefers-reduced-motion: reduce) {
   .motif, .brand, .center, .diagram, .eyebrow, .title, .tagline, .defn, .cta, .meta, .foot { animation: none !important; }
 }
+
+/* ── Finalist login ───────────────────────────────── */
+.loginBox {
+  margin-top: clamp(28px, 5vh, 44px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(360px, 90vw);
+}
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+.loginInput {
+  width: 100%;
+  font-family: var(--font-ui), sans-serif;
+  font-size: 14px;
+  background: rgba(27,26,23,0.06);
+  border: 1px solid #d9d4c9;
+  border-radius: 8px;
+  padding: 13px 16px;
+  color: #1b1a17;
+  outline: none;
+  text-align: center;
+  transition: border-color 0.15s ease;
+  box-sizing: border-box;
+}
+.loginInput::placeholder { color: #b3afa4; }
+.loginInput:focus { border-color: #b07d2e; }
+.loginInputOtp {
+  font-family: var(--font-mono), monospace;
+  font-size: 22px;
+  letter-spacing: 0.2em;
+}
+.loginHint {
+  font-family: var(--font-ui), sans-serif;
+  font-size: 13px;
+  color: #8a877e;
+  text-align: center;
+  margin: 0;
+}
+.loginHint strong { color: #37352f; }
+.loginBack {
+  background: none;
+  border: none;
+  font-family: var(--font-ui), sans-serif;
+  font-size: 12px;
+  color: #8a877e;
+  cursor: pointer;
+  padding: 4px 0;
+  letter-spacing: 0.02em;
+}
+.loginBack:hover { color: #37352f; }
+.loginError {
+  margin-top: 10px;
+  font-family: var(--font-ui), sans-serif;
+  font-size: 13px;
+  color: #c0392b;
+  text-align: center;
+}
