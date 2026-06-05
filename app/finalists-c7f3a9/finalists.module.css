@@ -132,7 +132,7 @@
   display: flex; align-items: baseline; gap: 10px;
   margin-bottom: 7px;
 }
-/* chTextOffLeft rows keep § on left, name still floats right via margin-left:auto */
+.chTextOffLeft .chHead { justify-content: flex-end; }
 
 .chNum {
   font-family: var(--ff-mono), monospace;
