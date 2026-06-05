@@ -32,45 +32,39 @@
 }
 .brand {
   position: fixed;
-  top: clamp(18px, 2.8vw, 30px);
-  left: clamp(18px, 2.8vw, 30px);
+  top: clamp(16px, 2.4vw, 26px);
+  left: clamp(16px, 2.4vw, 26px);
   z-index: 50;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0;
+  align-items: center;
+  gap: 9px;
 }
 .brandLogo {
-  width: 32px; height: 32px;
-  border-radius: 7px;
+  width: 26px; height: 26px;
+  border-radius: 6px;
   object-fit: cover;
-  margin-bottom: 7px;
+  flex-shrink: 0;
+}
+.brandText {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 .brandName {
   font-family: "CMUSans", sans-serif;
-  font-size: 10px;
+  font-size: 8.5px;
   font-weight: 700;
-  letter-spacing: 0.26em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: #1b1a17;
   line-height: 1;
-}
-.brandSub {
-  font-family: "CMUSans", sans-serif;
-  font-size: 8px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: #9a9690;
-  line-height: 1;
-  margin-top: 4px;
 }
 .brandScript {
   font-family: "Pestapora", cursive;
-  font-size: 20px;
+  font-size: 18px;
   color: #1b1a17;
-  line-height: 1.15;
+  line-height: 1.1;
   letter-spacing: 0;
-  margin-top: 5px;
 }
 .loading {
   min-height: 100svh;
