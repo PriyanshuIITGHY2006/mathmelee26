@@ -26,7 +26,7 @@ const caps    = localFont({ src: "../limit-point-f2137704/fonts/Montserrat.ttf",
 const CHAPTERS = [
   {
     num: "I",   name: "The Open Set",
-    dir: "ltr" as const, pathSide: null as null | "left" | "right",
+    dir: "ltr" as const, pathSide: "left" as null | "left" | "right",
     story: "Twenty-five points were lifted from the dense substrate of all applicants. Their membership in set F was axiomatically confirmed. A well-ordering was applied. None of them asked which.",
   },
   {
