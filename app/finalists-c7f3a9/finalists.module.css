@@ -153,7 +153,10 @@
   color: #6e6b65;
   line-height: 1.72;
   margin: 0;
-  max-width: 58ch;
+  max-width: 100%;
+}
+.chTextOffLeft .chStory {
+  text-align: right;
 }
 
 /* ── Node row ────────────────────────────────── */
