@@ -119,30 +119,62 @@ const MOTIFS = [
   { s: "∀ε>0", left: "74%", top: "19%", size: 13, rot: -2, op: 0.055, mono: true },
 ];
 
-const INITIAL_CODE = `# Mathematics Melee — Round III Entry Protocol
-# ────────────────────────────────────────────
-# Theorem: You are a limit point of F.
+const INITIAL_CODE = `# ═══════════════════════════════════════════════════════
+#   MATHEMATICS MELEE  —  ROUND III
+#   Official Entry Protocol  v3.14159265358979...
+#   Certified by the International Bureau of ε's and δ's
+# ═══════════════════════════════════════════════════════
 #
-# Proof:
-#   Step 1. Replace "???" below with your name.
-#   Step 2. Do not touch anything else.
-#   Step 3. Click Submit and pray to Cauchy.
+#   INSTRUCTIONS  (yes, you need to read these)
+#
+#   Step 1.  Replace "???" below with your actual name.
+#            "???" is not your name. We checked. Twice.
+#
+#   Step 2.  Do NOT touch anything else in this file.
+#            Cauchy is watching. The Axiom of Choice
+#            is watching. Your mother is watching.
+#
+#   Step 3.  Click Submit. Light a candle for Euler.
+#            Hope for the best.
+#
+# ───────────────────────────────────────────────────────
 
 applicant = "???"
 
-# ── DO NOT EDIT BELOW ─────────────────────────
+# ═══  DO NOT EDIT BELOW THIS LINE  ══════════════════════
+#      (we mean it. we have a theorem about this.)
 
-assert applicant != "???",  "Identity crisis: you are still ???"
-assert len(applicant.strip()) > 0, "The empty set is not a finalist"
-assert applicant != "YOUR_NAME_HERE", "Bro."
+if applicant == "???":
+    raise IdentityCrisisError(
+        "You are STILL '???'. Remarkable. "
+        "Have you considered a career in topology? "
+        "You clearly enjoy being undefined."
+    )
 
-# By submitting you acknowledge:
-#  · You have solved at least ε > 0 problems
-#  · Your sequence of effort converged
-#  · You are, provably, a limit point
+if len(applicant.strip()) == 0:
+    raise EmptySetError(
+        "The empty set ∅ is many things. "
+        "A finalist is not one of them."
+    )
 
-print(f"Welcome, {applicant}.")
-print(f"∀ε > 0, ∃δ > 0 s.t. you belong here.  □")
+if applicant in ("Euler", "Gauss", "Cauchy", "Riemann"):
+    raise DeceasedMathematicianError(
+        f"We are deeply honoured, but {applicant} is "
+        f"unavailable for Round III (deceased, regrettably)."
+    )
+
+if applicant == "YOUR_NAME_HERE":
+    raise LiteralError("...bro.")
+
+# ── VERIFICATION COMPLETE ───────────────────────────────
+
+print(f"✓  Identity confirmed  :  {applicant}")
+print(f"✓  Convergence check   :  PASSED  (barely)")
+print(f"✓  Limit point status  :  CERTIFIED")
+print()
+print(f"   Welcome, {applicant}.")
+print(f"   ∀ε > 0, ∃δ > 0  s.t.  |you − greatness| < ε")
+print(f"                                                □")
 `;
 
 function extractApplicant(code: string): string | null {
