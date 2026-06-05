@@ -52,8 +52,11 @@ export default function FinalistSetup() {
     <main className={styles.wrap}>
       <div className={styles.frame} />
       <div className={styles.brand}>
-        <span className={styles.brandTop}>Polygon · Mathematics Melee</span>
-        <span className={styles.brandBot}>The Limit Point</span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className={styles.brandLogo} src="/logo.jpeg" alt="Mathematics Melee" />
+        <span className={styles.brandName}>Mathematics Melee</span>
+        <span className={styles.brandSub}>by Polygon · IIT Guwahati</span>
+        <span className={styles.brandScript}>The Finals</span>
       </div>
       <div className={styles.card}>
         <p className={styles.eyebrow}>Finalist Portal</p>
