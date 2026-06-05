@@ -75,13 +75,6 @@ export default function LimitPointPage() {
         </span>
       ))}
 
-      <header className={styles.brand}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className={styles.logo} src="/logo.jpeg" alt="Mathematics Melee" />
-        <div className={styles.nm}>Mathematics Melee</div>
-        <div className={styles.sub}>by Polygon · IIT Guwahati</div>
-      </header>
-
       <section className={styles.center}>
         <svg className={styles.diagram} viewBox="0 0 600 120" role="img" aria-label="A sequence converging to the limit point L">
           <line className={styles.axisLine} x1="20" y1="60" x2="580" y2="60" />
@@ -110,9 +103,19 @@ export default function LimitPointPage() {
         </svg>
 
         <div className={styles.eyebrow}>
-          <span className={styles.bar} />Round II · The Final Convergence<span className={styles.bar} />
+          <span className={styles.bar} />The Finals · Mathematics Melee<span className={styles.bar} />
         </div>
         <h1 className={styles.title}>The Limit Point</h1>
+
+        <div className={styles.brand}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className={styles.logo} src="/logo.jpeg" alt="Mathematics Melee" />
+          <div className={styles.brandText}>
+            <span className={styles.nm}>Mathematics Melee</span>
+            <span className={styles.sub}>by Polygon · IIT Guwahati</span>
+          </div>
+        </div>
+
         <p className={styles.tagline}>
           Every sequence of brilliance converges to a single point.
           <br />

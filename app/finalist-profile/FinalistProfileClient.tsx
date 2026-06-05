@@ -45,7 +45,7 @@ export default function FinalistProfileClient() {
         <img className={styles.brandLogo} src="/logo.jpeg" alt="Mathematics Melee" />
         <span className={styles.brandName}>Mathematics Melee</span>
         <span className={styles.brandSub}>by Polygon · IIT Guwahati</span>
-        <span className={styles.brandScript}>The Finals</span>
+        <span className={styles.brandScript}>The Limit Point</span>
       </div>
       <div className={styles.card}>
         <div className={styles.avatar}>{initials}</div>
