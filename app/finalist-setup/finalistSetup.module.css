@@ -35,35 +35,12 @@
   top: clamp(16px, 2.4vw, 26px);
   left: clamp(16px, 2.4vw, 26px);
   z-index: 50;
-  display: flex;
-  align-items: center;
-  gap: 9px;
-}
-.brandLogo {
-  width: 26px; height: 26px;
-  border-radius: 6px;
-  object-fit: cover;
-  flex-shrink: 0;
-}
-.brandText {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-.brandName {
-  font-family: "CMUSans", sans-serif;
-  font-size: 8.5px;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: #1b1a17;
-  line-height: 1;
 }
 .brandScript {
   font-family: "Pestapora", cursive;
-  font-size: 18px;
+  font-size: 22px;
   color: #1b1a17;
-  line-height: 1.1;
+  line-height: 1;
   letter-spacing: 0;
 }
 .loading {

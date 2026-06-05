@@ -34,37 +34,25 @@
 }
 @media (max-width: 720px) { .motif { display: none; } }
 
-/* brand — centered inline below title */
+/* brand */
 .brand {
   position: relative;
   z-index: 5;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-top: clamp(10px, 2vh, 18px);
-  animation: fadeUp 1s ease 0.15s both;
+  text-align: center;
+  padding-top: clamp(34px, 6vh, 62px);
+  animation: fade 0.9s ease both;
 }
 .logo {
-  width: 22px; height: 22px; border-radius: 5px; object-fit: cover;
-  flex-shrink: 0;
-}
-.brandText {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1px;
+  width: 34px; height: 34px; border-radius: 8px; object-fit: cover;
+  display: inline-block;
 }
 .nm {
-  font-family: var(--font-caps), sans-serif; font-weight: 700;
-  letter-spacing: 0.22em; font-size: 9px; text-transform: uppercase; color: #1b1a17;
-  line-height: 1;
+  font-family: var(--font-caps), sans-serif; font-weight: 600;
+  letter-spacing: 0.3em; font-size: 13px; text-transform: uppercase; margin-top: 13px;
 }
 .sub {
-  font-family: var(--font-caps), sans-serif; font-weight: 500; font-size: 8px;
-  letter-spacing: 0.18em; text-transform: uppercase; color: #8a877e;
-  line-height: 1;
+  font-family: var(--font-caps), sans-serif; font-weight: 500; font-size: 10px;
+  letter-spacing: 0.24em; text-transform: uppercase; color: #8a877e; margin-top: 8px;
 }
 
 /* center column */
@@ -101,7 +89,7 @@
 
 .title {
   font-family: var(--font-script), cursive;
-  font-size: clamp(80px, 15vw, 190px);
+  font-size: clamp(64px, 12vw, 150px);
   line-height: 0.9; letter-spacing: 0; color: #1b1a17; font-weight: 400;
   margin: 0; animation: fadeUp 1s ease 0.1s both;
 }
