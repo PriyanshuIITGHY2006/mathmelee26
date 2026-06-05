@@ -142,7 +142,7 @@ export default function FinalistsClient() {
 
   const traverseAll = () => {
     NODES.forEach((node, i) => {
-      setTimeout(() => setFlipped(prev => new Set([...prev, node.id])), i * 65);
+      setTimeout(() => setFlipped(prev => { const n = new Set(prev); n.add(node.id); return n; }), i * 65);
     });
     setTimeout(() => setAllRevealed(true), NODES.length * 65 + 400);
   };
