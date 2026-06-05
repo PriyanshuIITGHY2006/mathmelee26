@@ -40,6 +40,10 @@ export default function FinalistProfileClient() {
   return (
     <main className={styles.wrap}>
       <div className={styles.frame} />
+      <div className={styles.brand}>
+        <span className={styles.brandTop}>Polygon · Mathematics Melee</span>
+        <span className={styles.brandBot}>The Limit Point</span>
+      </div>
       <div className={styles.card}>
         <div className={styles.avatar}>{initials}</div>
         <p className={styles.eyebrow}>Mathematics Melee · Finalist</p>

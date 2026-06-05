@@ -51,6 +51,10 @@ export default function FinalistSetup() {
   return (
     <main className={styles.wrap}>
       <div className={styles.frame} />
+      <div className={styles.brand}>
+        <span className={styles.brandTop}>Polygon · Mathematics Melee</span>
+        <span className={styles.brandBot}>The Limit Point</span>
+      </div>
       <div className={styles.card}>
         <p className={styles.eyebrow}>Finalist Portal</p>
         <h1 className={styles.title}>Complete Your Profile</h1>
