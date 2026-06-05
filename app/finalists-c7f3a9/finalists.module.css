@@ -141,8 +141,8 @@
   font-family: var(--ff-serif), Georgia, serif;
   font-size: clamp(19px, 2.8vw, 28px);
   font-weight: 700; color: #1b1a17; line-height: 1;
-  margin-left: auto;
 }
+
 
 /* Story — CMU Sans Serif, clean and readable */
 .chStory {
@@ -151,10 +151,10 @@
   font-weight: 500;
   color: #6e6b65;
   line-height: 1.72;
-  margin: 0;
+  margin: 0 0 0 auto;
   max-width: 58ch;
+  text-align: right;
 }
-.chTextOffLeft .chStory { margin-left: auto; }
 
 /* ── Node row ────────────────────────────────── */
 .row {
