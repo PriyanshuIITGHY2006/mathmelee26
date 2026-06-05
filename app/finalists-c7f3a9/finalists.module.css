@@ -131,16 +131,17 @@
   display: flex; align-items: baseline; gap: 10px;
   margin-bottom: 7px;
 }
-.chTextOffLeft .chHead { justify-content: flex-end; }
+/* chTextOffLeft rows keep § on left, name still floats right via margin-left:auto */
 
 .chNum {
   font-family: var(--ff-mono), monospace;
   font-size: 11px; color: #b07d2e; letter-spacing: 0.1em; flex-shrink: 0;
 }
 .chName {
-  font-family: var(--ff-sans), sans-serif;
+  font-family: var(--ff-serif), Georgia, serif;
   font-size: clamp(19px, 2.8vw, 28px);
   font-weight: 700; color: #1b1a17; line-height: 1;
+  margin-left: auto;
 }
 
 /* Story — CMU Sans Serif, clean and readable */
