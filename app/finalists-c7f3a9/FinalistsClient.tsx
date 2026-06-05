@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import localFont from "next/font/local";
@@ -13,36 +13,88 @@ const serif  = localFont({ src: [
   { path: "../limit-point-f2137704/fonts/CMUSerif-Roman.ttf", weight: "400", style: "normal" },
   { path: "../limit-point-f2137704/fonts/CMUSerif-Bold.ttf",  weight: "700", style: "normal" },
 ], variable: "--ff-serif", display: "swap" });
-const mono   = localFont({ src: "../limit-point-f2137704/fonts/JetBrainsMono.ttf", variable: "--ff-mono",   display: "swap" });
-const caps   = localFont({ src: "../limit-point-f2137704/fonts/Montserrat.ttf",    variable: "--ff-caps",   display: "swap" });
+const mono = localFont({ src: "../limit-point-f2137704/fonts/JetBrainsMono.ttf", variable: "--ff-mono", display: "swap" });
+const caps = localFont({ src: "../limit-point-f2137704/fonts/Montserrat.ttf",    variable: "--ff-caps", display: "swap" });
+
+// ── Story ──────────────────────────────────────────────────────────────
+const CHAPTERS = [
+  {
+    num: "I", name: "The Open Set", dir: "ltr" as const,
+    story: "Twenty-five points were lifted from the dense substrate of all applicants. Their membership in the finalist set F was, at last, axiomatically confirmed. A well-ordering was applied. None of them asked which.",
+  },
+  {
+    num: "II", name: "The Cauchy Crusade", dir: "rtl" as const,
+    story: "Armed with nothing but ε > 0, they marched into the problem sets. For every challenge hurled at them, they produced an N. Some wept. All converged. Absolutely.",
+  },
+  {
+    num: "III", name: "The Continuous Path", dir: "ltr" as const,
+    story: "The road ahead was smooth — differentiable at every point, they claimed. The examiners were not convinced. The examiners were not wrong.",
+  },
+  {
+    num: "IV", name: "The Fixed Point Forest", dir: "rtl" as const,
+    story: "Banach's theorem guaranteed exactly one way out. A contraction mapping was applied. They found the exit. Whether they understood it remains a separate, ongoing investigation.",
+  },
+  {
+    num: "V", name: "The Limit Point", dir: "ltr" as const,
+    story: "Every open neighbourhood of this final destination contains at least one finalist. That finalist, if you are reading this, is you.",
+  },
+];
+
+// Nodes in path order (1–25). Chapters group them 5 per row.
+const NODES = [
+  { id:  1, sym: "∃",  label: "You Exist",          chapter: 0 },
+  { id:  2, sym: "∈",  label: "Set Membership",     chapter: 0 },
+  { id:  3, sym: "⊂",  label: "Proper Subset",      chapter: 0 },
+  { id:  4, sym: "∀",  label: "All Obstacles",      chapter: 0 },
+  { id:  5, sym: "sup",label: "Supremum Found",     chapter: 0 },
+
+  { id:  6, sym: "a₁", label: "Sequence Begins",    chapter: 1 },
+  { id:  7, sym: "ε",  label: "ε > 0 Chosen",       chapter: 1 },
+  { id:  8, sym: "δ",  label: "δ Found (Barely)",   chapter: 1 },
+  { id:  9, sym: "N",  label: "N(ε) Located",       chapter: 1 },
+  { id: 10, sym: "→",  label: "Cauchy Approved",    chapter: 1 },
+
+  { id: 11, sym: "C⁰", label: "Continuous",         chapter: 2 },
+  { id: 12, sym: "C¹", label: "Differentiable",     chapter: 2 },
+  { id: 13, sym: "C∞", label: "Smooth as π",        chapter: 2 },
+  { id: 14, sym: "∫",  label: "Integrable",         chapter: 2 },
+  { id: 15, sym: "μ",  label: "Measure Zero Flaws", chapter: 2 },
+
+  { id: 16, sym: "T",  label: "Contraction Found",  chapter: 3 },
+  { id: 17, sym: "‖‖", label: "Normed Space",       chapter: 3 },
+  { id: 18, sym: "≤",  label: "Lipschitz Bound",    chapter: 3 },
+  { id: 19, sym: "T*", label: "Banach's Blessing",  chapter: 3 },
+  { id: 20, sym: "x*", label: "Fixed Point ∃!",     chapter: 3 },
+
+  { id: 21, sym: "B",  label: "Open Ball Entered",  chapter: 4 },
+  { id: 22, sym: "ω",  label: "Accumulation Pt.",   chapter: 4 },
+  { id: 23, sym: "→L", label: "Converging to L",    chapter: 4 },
+  { id: 24, sym: "L",  label: "Limit Approached",   chapter: 4 },
+  { id: 25, sym: "★",  label: "The Limit Point",    chapter: 4 },
+];
 
 const FINALISTS = [
-  "Finalist 01", "Finalist 02", "Finalist 03", "Finalist 04", "Finalist 05",
-  "Finalist 06", "Finalist 07", "Finalist 08", "Finalist 09", "Finalist 10",
-  "Finalist 11", "Finalist 12", "Finalist 13", "Finalist 14", "Finalist 15",
-  "Finalist 16", "Finalist 17", "Finalist 18", "Finalist 19", "Finalist 20",
-  "Finalist 21", "Finalist 22", "Finalist 23", "Finalist 24", "Finalist 25",
+  "Finalist 01","Finalist 02","Finalist 03","Finalist 04","Finalist 05",
+  "Finalist 06","Finalist 07","Finalist 08","Finalist 09","Finalist 10",
+  "Finalist 11","Finalist 12","Finalist 13","Finalist 14","Finalist 15",
+  "Finalist 16","Finalist 17","Finalist 18","Finalist 19","Finalist 20",
+  "Finalist 21","Finalist 22","Finalist 23","Finalist 24","Finalist 25",
 ];
 
-const SYMBOLS = [
-  "α","β","γ","δ","ε","ζ","η","θ","ι","κ",
-  "λ","μ","ν","ξ","π","ρ","σ","τ","υ","φ",
-  "χ","ψ","ω","Ω","∇",
-];
-
+// ── Background motifs ──────────────────────────────────────────────────
 const MOTIFS = [
-  { s: "∫",       left: "5%",  top: "11%", size: 60, rot: -8, op: 0.065 },
-  { s: "∑",       left: "88%", top: "8%",  size: 56, rot:  6, op: 0.065 },
-  { s: "∂",       left: "93%", top: "40%", size: 44, rot: 10, op: 0.055 },
-  { s: "∞",       left: "7%",  top: "76%", size: 50, rot: -4, op: 0.055 },
-  { s: "√",       left: "6%",  top: "88%", size: 40, rot:  0, op: 0.05  },
-  { s: "∇",       left: "14%", top: "24%", size: 28, rot:  0, op: 0.055 },
-  { s: "θ",       left: "91%", top: "68%", size: 36, rot: -6, op: 0.055 },
-  { s: "ℝ",       left: "85%", top: "84%", size: 38, rot:  0, op: 0.05  },
-  { s: "∀ε>0",   left: "74%", top: "15%", size: 14, rot: -2, op: 0.065, mono: true },
-  { s: "xₙ → L", left: "10%", top: "58%", size: 15, rot: -3, op: 0.065, mono: true },
+  { s: "∫",      left: "4%",  top: "10%", size: 58, rot: -8, op: 0.06  },
+  { s: "∑",      left: "87%", top: "7%",  size: 54, rot:  6, op: 0.06  },
+  { s: "∂",      left: "93%", top: "38%", size: 42, rot: 10, op: 0.05  },
+  { s: "∞",      left: "6%",  top: "74%", size: 48, rot: -4, op: 0.05  },
+  { s: "√",      left: "90%", top: "80%", size: 38, rot:  0, op: 0.045 },
+  { s: "∇",      left: "13%", top: "22%", size: 26, rot:  0, op: 0.05  },
+  { s: "ℝ",      left: "84%", top: "55%", size: 34, rot:  0, op: 0.045 },
+  { s: "xₙ→L",  left: "10%", top: "56%", size: 13, rot: -3, op: 0.06, mono: true },
+  { s: "∀ε>0",  left: "74%", top: "20%", size: 13, rot: -2, op: 0.06, mono: true },
 ];
 
+// ── Monaco entry code ──────────────────────────────────────────────────
 const INITIAL_CODE = `# Mathematics Melee — Round II Entry Protocol
 # ────────────────────────────────────────────
 # Theorem: You are a limit point of F.
@@ -66,7 +118,7 @@ assert applicant != "YOUR_NAME_HERE", "Bro."
 #  · You are, provably, a limit point
 
 print(f"Welcome, {applicant}.")
-print(f"∀ε > 0, ∃δ > 0 s.t. you belong here. □")
+print(f"∀ε > 0, ∃δ > 0 s.t. you belong here.  □")
 `;
 
 function extractApplicant(code: string): string | null {
@@ -77,22 +129,27 @@ function extractApplicant(code: string): string | null {
   return v;
 }
 
+// ── Component ──────────────────────────────────────────────────────────
 export default function FinalistsClient() {
-  const [flipped, setFlipped]     = useState<Set<number>>(new Set());
-  const [allRevealed, setAll]     = useState(false);
-  const [code, setCode]           = useState(INITIAL_CODE);
+  const [flipped, setFlipped] = useState<Set<number>>(new Set());
+  const [allRevealed, setAllRevealed] = useState(false);
+  const [code, setCode] = useState(INITIAL_CODE);
   const [submitted, setSubmitted] = useState(false);
   const [applicant, setApplicant] = useState<string | null>(null);
-  const editorRef = useRef<HTMLDivElement>(null);
 
-  const toggle = (i: number) =>
-    setFlipped(prev => { const n = new Set(prev); n.has(i) ? n.delete(i) : n.add(i); return n; });
+  const toggle = (id: number) =>
+    setFlipped(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
 
-  const revealAll = () => { setFlipped(new Set(FINALISTS.map((_,i)=>i))); setAll(true); };
+  const traverseAll = () => {
+    NODES.forEach((node, i) => {
+      setTimeout(() => setFlipped(prev => new Set([...prev, node.id])), i * 65);
+    });
+    setTimeout(() => setAllRevealed(true), NODES.length * 65 + 400);
+  };
 
-  const handleCode = useCallback((v: string | undefined) => setCode(v ?? ""), []);
-
+  const handleCode = useCallback((v?: string) => setCode(v ?? ""), []);
   const canSubmit = extractApplicant(code) !== null;
+  const allFlipped = flipped.size === NODES.length;
 
   const handleSubmit = () => {
     const name = extractApplicant(code);
@@ -101,8 +158,6 @@ export default function FinalistsClient() {
     setSubmitted(true);
   };
 
-  const allFlipped = flipped.size === FINALISTS.length;
-
   return (
     <main className={`${script.variable} ${serif.variable} ${mono.variable} ${caps.variable} ${styles.wrap}`}>
       <div className={styles.frame} aria-hidden />
@@ -110,10 +165,10 @@ export default function FinalistsClient() {
       {MOTIFS.map((m, i) => (
         <span key={i} aria-hidden className={styles.motif} style={{
           left: m.left, top: m.top, fontSize: m.size, opacity: m.op,
-          fontFamily: m.mono ? "var(--ff-mono), monospace" : "var(--ff-serif), Georgia, serif",
+          fontFamily: m.mono ? "var(--ff-mono),monospace" : "var(--ff-serif),Georgia,serif",
           ["--r" as string]: `${m.rot}deg`,
           animationDuration: `${7 + (i % 6)}s`,
-          animationDelay: `${(i % 8) * 0.5}s`,
+          animationDelay: `${(i % 8) * 0.55}s`,
         }}>{m.s}</span>
       ))}
 
@@ -124,60 +179,87 @@ export default function FinalistsClient() {
         <div className={styles.sub}>by Polygon · IIT Guwahati</div>
       </header>
 
-      {/* Hero */}
+      {/* Page title */}
       <section className={styles.hero}>
-        <p className={styles.roundTag}>Round II</p>
+        <p className={styles.roundTag}>Round II · The Limit Point</p>
         <h1 className={styles.title}>The Finalists</h1>
         <p className={styles.tagline}>
-          Twenty-five sequences of brilliance.<br />One limit point.
-        </p>
-        <p className={styles.instruction}>
-          Click each card to reveal a name.
+          Follow the path. Reveal the names.<br />
+          <em>Twenty-five points converging to one.</em>
         </p>
         {!allFlipped && (
-          <button className={styles.revealAll} onClick={revealAll}>
-            reveal all &nbsp;<span>∀n ∈ ℕ</span>
+          <button className={styles.traverseBtn} onClick={traverseAll}>
+            Traverse all &nbsp;<span className={styles.traverseMath}>∀n∈F</span>
           </button>
         )}
       </section>
 
-      {/* Cards */}
-      <section className={styles.grid} aria-label="Finalists">
-        {FINALISTS.map((name, i) => {
-          const isFlipped = flipped.has(i);
+      {/* Zigzag map */}
+      <section className={styles.mapSection} aria-label="Finalist path">
+        {CHAPTERS.map((ch, ci) => {
+          const chNodes = NODES.slice(ci * 5, ci * 5 + 5);
+          const isLtr = ch.dir === "ltr";
+          const turnSide = isLtr ? styles.turnRight : styles.turnLeft;
+
           return (
-            <button
-              key={i}
-              className={`${styles.card} ${isFlipped ? styles.flipped : ""}`}
-              onClick={() => toggle(i)}
-              aria-label={isFlipped ? `${name}` : `Reveal finalist ${i + 1}`}
-            >
-              <div className={styles.inner}>
-                <div className={styles.front}>
-                  <span className={styles.sym}>{SYMBOLS[i]}</span>
-                  <span className={styles.idx}>x<sub>{i+1}</sub></span>
+            <div key={ci} className={styles.chapterBlock}>
+
+              {/* Chapter header */}
+              <div className={styles.chHead}>
+                <div className={styles.chRule} />
+                <div className={styles.chMeta}>
+                  <span className={styles.chNum}>§ {ch.num}</span>
+                  <span className={styles.chName}>{ch.name}</span>
                 </div>
-                <div className={styles.back}>
-                  <span className={styles.fname}>{name}</span>
-                </div>
+                <p className={styles.chStory}>{ch.story}</p>
               </div>
-            </button>
+
+              {/* Node row */}
+              <div className={`${styles.row} ${isLtr ? "" : styles.rowRtl}`}>
+                {chNodes.map((node, ni) => {
+                  const isFlipped = flipped.has(node.id);
+                  return (
+                    <>
+                      <button
+                        key={node.id}
+                        className={`${styles.node} ${isFlipped ? styles.nodeFlipped : ""} ${node.id === 25 ? styles.nodeStar : ""}`}
+                        onClick={() => toggle(node.id)}
+                        title={isFlipped ? FINALISTS[node.id - 1] : `Milestone ${node.id}`}
+                      >
+                        <div className={styles.nodeInner}>
+                          <div className={styles.nodeFront}>
+                            <span className={styles.nodeSym}>{node.sym}</span>
+                            <span className={styles.nodeLabel}>{node.label}</span>
+                          </div>
+                          <div className={styles.nodeBack}>
+                            <span className={styles.nodeName}>{FINALISTS[node.id - 1]}</span>
+                            <span className={styles.nodeCheck}>✓</span>
+                          </div>
+                        </div>
+                      </button>
+                      {ni < 4 && <div className={styles.hLine} key={`line-${node.id}`} />}
+                    </>
+                  );
+                })}
+              </div>
+
+              {/* Turn connector between rows */}
+              {ci < 4 && <div className={`${styles.turn} ${turnSide}`} />}
+            </div>
           );
         })}
       </section>
 
-      {/* Monaco gate */}
-      <section className={`${styles.gate} ${(allFlipped || allRevealed) ? styles.gateVisible : ""}`} ref={editorRef}>
+      {/* Monaco gate — fades in once all revealed */}
+      <section className={`${styles.gate} ${(allFlipped || allRevealed) ? styles.gateVisible : ""}`}>
         <div className={styles.gateDivider}>
-          <span className={styles.bar} />
-          <span>Entry Protocol</span>
-          <span className={styles.bar} />
+          <span className={styles.bar} /><span>Entry Protocol</span><span className={styles.bar} />
         </div>
 
         {!submitted ? (
           <>
             <p className={styles.gateDesc}>
-              If you see your name above — complete the proof below to enter.
+              If your name appears on the path above — complete the proof below to enter.
             </p>
             <div className={styles.editorWrap}>
               <div className={styles.editorBar}>
@@ -187,14 +269,14 @@ export default function FinalistsClient() {
                 <span className={styles.editorTitle}>entry.py</span>
               </div>
               <MonacoEditor
-                height="360px"
+                height="340px"
                 defaultLanguage="python"
                 value={code}
                 onChange={handleCode}
                 theme="vs-dark"
                 options={{
                   fontSize: 13,
-                  fontFamily: "var(--ff-mono), 'JetBrains Mono', monospace",
+                  fontFamily: "var(--ff-mono),'JetBrains Mono',monospace",
                   fontLigatures: true,
                   lineNumbers: "on",
                   minimap: { enabled: false },
@@ -213,17 +295,17 @@ export default function FinalistsClient() {
               onClick={handleSubmit}
               disabled={!canSubmit}
             >
-              {canSubmit ? "Submit Proof →" : "Replace ??? with your name first"}
+              {canSubmit ? "Submit Proof  →" : 'Replace ??? with your name first'}
             </button>
             {!canSubmit && (
               <p className={styles.submitHint}>
-                The proof is incomplete. <code>applicant = "???"</code> is not a valid identity.
+                Proof incomplete — <code>applicant = "???"</code> is not a valid identity.
               </p>
             )}
           </>
         ) : (
           <div className={styles.accepted}>
-            <div className={styles.acceptedMath}>□</div>
+            <div className={styles.qed}>□</div>
             <p className={styles.acceptedLine}>
               Proof accepted, <strong>{applicant}</strong>.
             </p>
@@ -233,7 +315,7 @@ export default function FinalistsClient() {
             <a className={styles.enterBtn} href="/limit-point-f2137704">
               Enter the Limit Point →
             </a>
-            <p className={styles.byInvitation}>By invitation · The Chosen Few</p>
+            <p className={styles.byInv}>By invitation · The Chosen Few</p>
           </div>
         )}
       </section>
