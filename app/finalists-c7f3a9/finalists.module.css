@@ -139,7 +139,7 @@
   font-size: 11px; color: #b07d2e; letter-spacing: 0.1em; flex-shrink: 0;
 }
 .chName {
-  font-family: var(--ff-sans), sans-serif;
+  font-family: var(--ff-serif), Georgia, serif;
   font-size: clamp(19px, 2.8vw, 28px);
   font-weight: 700; color: #1b1a17; line-height: 1;
 }
