@@ -79,12 +79,32 @@ const NODES = [
   { id: 25, sym: "★",   label: "The Limit Point",    chapter: 4 },
 ];
 
-const FINALISTS = [
-  "Finalist 01","Finalist 02","Finalist 03","Finalist 04","Finalist 05",
-  "Finalist 06","Finalist 07","Finalist 08","Finalist 09","Finalist 10",
-  "Finalist 11","Finalist 12","Finalist 13","Finalist 14","Finalist 15",
-  "Finalist 16","Finalist 17","Finalist 18","Finalist 19","Finalist 20",
-  "Finalist 21","Finalist 22","Finalist 23","Finalist 24","Finalist 25",
+const FINALISTS: { name: string; college: string }[] = [
+  { name: "Finalist 01", college: "IIT Guwahati" },
+  { name: "Finalist 02", college: "IIT Bombay" },
+  { name: "Finalist 03", college: "IIT Delhi" },
+  { name: "Finalist 04", college: "IIT Madras" },
+  { name: "Finalist 05", college: "IIT Kanpur" },
+  { name: "Finalist 06", college: "IIT Kharagpur" },
+  { name: "Finalist 07", college: "IIT Roorkee" },
+  { name: "Finalist 08", college: "IIT Guwahati" },
+  { name: "Finalist 09", college: "IIT Bombay" },
+  { name: "Finalist 10", college: "IIT Delhi" },
+  { name: "Finalist 11", college: "IIT Madras" },
+  { name: "Finalist 12", college: "IIT Kanpur" },
+  { name: "Finalist 13", college: "IIT Kharagpur" },
+  { name: "Finalist 14", college: "IIT Roorkee" },
+  { name: "Finalist 15", college: "IIT Guwahati" },
+  { name: "Finalist 16", college: "IIT Bombay" },
+  { name: "Finalist 17", college: "IIT Delhi" },
+  { name: "Finalist 18", college: "IIT Madras" },
+  { name: "Finalist 19", college: "IIT Kanpur" },
+  { name: "Finalist 20", college: "IIT Kharagpur" },
+  { name: "Finalist 21", college: "IIT Roorkee" },
+  { name: "Finalist 22", college: "IIT Guwahati" },
+  { name: "Finalist 23", college: "IIT Bombay" },
+  { name: "Finalist 24", college: "IIT Delhi" },
+  { name: "Finalist 25", college: "IIT Madras" },
 ];
 
 const MOTIFS = [
@@ -151,8 +171,9 @@ function catmullRomPath(pts: { x: number; y: number }[]): string {
 
 // ── Component ──────────────────────────────────────────────────────────
 export default function FinalistsClient() {
-  const [flipped, setFlipped]       = useState<Set<number>>(new Set());
+  const [activeNode, setActiveNode]  = useState<number | null>(null);
   const [allRevealed, setAllRev]    = useState(false);
+  const traverseRef                  = useRef<ReturnType<typeof setInterval> | null>(null);
   const [code, setCode]             = useState(INITIAL_CODE);
   const [submitted, setSubmitted]   = useState(false);
   const [applicant, setApplicant]   = useState<string | null>(null);
@@ -185,18 +206,26 @@ export default function FinalistsClient() {
   }, [recompute]);
 
   const toggle = (id: number) =>
-    setFlipped(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
+    setActiveNode(prev => prev === id ? null : id);
 
   const traverseAll = () => {
-    NODES.forEach((node, i) =>
-      setTimeout(() => setFlipped(prev => { const n = new Set(prev); n.add(node.id); return n; }), i * 65)
-    );
-    setTimeout(() => setAllRev(true), NODES.length * 65 + 400);
+    if (traverseRef.current) clearInterval(traverseRef.current);
+    let i = 0;
+    setActiveNode(NODES[0].id);
+    traverseRef.current = setInterval(() => {
+      i++;
+      if (i < NODES.length) {
+        setActiveNode(NODES[i].id);
+      } else {
+        clearInterval(traverseRef.current!);
+        traverseRef.current = null;
+        setTimeout(() => { setActiveNode(null); setAllRev(true); }, 1000);
+      }
+    }, 900);
   };
 
   const handleCode = useCallback((v?: string) => setCode(v ?? ""), []);
   const canSubmit  = extractApplicant(code) !== null;
-  const allFlipped = flipped.size === NODES.length;
 
   const handleSubmit = () => {
     const name = extractApplicant(code);
@@ -230,7 +259,7 @@ export default function FinalistsClient() {
       <section className={styles.hero}>
         <h1 className={styles.title}>The Finalists</h1>
         <p className={styles.tagline}>Round III · Follow the path. Reveal the names.</p>
-        {!allFlipped && (
+        {!allRevealed && (
           <button className={styles.traverseBtn} onClick={traverseAll}>
             Traverse all &nbsp;<span className={styles.traverseMath}>∀n ∈ F</span>
           </button>
@@ -282,26 +311,24 @@ export default function FinalistsClient() {
                 {/* Node row */}
                 <div className={`${styles.row} ${ch.dir === "rtl" ? styles.rowRtl : ""}`}>
                   {chNodes.map(node => {
-                    const isFlipped = flipped.has(node.id);
+                    const isActive  = activeNode === node.id;
                     const isStar    = node.id === 25;
+                    const finalist  = FINALISTS[node.id - 1];
                     return (
                       <button
                         key={node.id}
                         ref={el => { nodeRefs.current[node.id - 1] = el; }}
-                        className={`${styles.node} ${isFlipped ? styles.nodeFlipped : ""} ${isStar ? styles.nodeStar : ""}`}
+                        className={`${styles.node} ${isActive ? styles.nodeActive : ""} ${isStar ? styles.nodeStar : ""}`}
                         onClick={() => toggle(node.id)}
-                        title={isFlipped ? FINALISTS[node.id - 1] : `Milestone ${node.id}`}
                       >
-                        <div className={styles.nodeInner}>
-                          <div className={styles.nodeFront}>
-                            <span className={styles.nodeSym}>{node.sym}</span>
-                            <span className={styles.nodeLabel}>{node.label}</span>
+                        <span className={styles.nodeSym}>{node.sym}</span>
+                        {isActive && (
+                          <div className={styles.popup}>
+                            <span className={styles.popupName}>{finalist.name}</span>
+                            <span className={styles.popupCollege}>{finalist.college}</span>
+                            <span className={styles.popupArrow} />
                           </div>
-                          <div className={styles.nodeBack}>
-                            <span className={styles.nodeName}>{FINALISTS[node.id - 1]}</span>
-                            <span className={styles.nodeCheck}>✓</span>
-                          </div>
-                        </div>
+                        )}
                       </button>
                     );
                   })}
@@ -313,7 +340,7 @@ export default function FinalistsClient() {
       </section>
 
       {/* Monaco gate */}
-      <section className={`${styles.gate} ${(allFlipped || allRevealed) ? styles.gateVisible : ""}`}>
+      <section className={`${styles.gate} ${allRevealed ? styles.gateVisible : ""}`}>
         <div className={styles.gateDivider}>
           <span className={styles.bar} /><span>Entry Protocol</span><span className={styles.bar} />
         </div>
