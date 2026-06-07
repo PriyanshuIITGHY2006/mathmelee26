@@ -223,8 +223,50 @@ function HomeView({
               {togglingReg ? "Updating…" : registrationsOpen ? "Close Registrations" : "Open Registrations"}
             </button>
           </div>
+
+          {/* Send welcome emails */}
+          <WelcomeEmailCard />
         </div>
       </div>
+    </div>
+  );
+}
+
+function WelcomeEmailCard() {
+  const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
+  const [result, setResult] = useState<{ sent: number; failed: number } | null>(null);
+
+  async function send() {
+    if (!confirm("Send welcome emails to all 25 finalists?")) return;
+    setStatus("sending");
+    try {
+      const r = await fetch("/api/admin/send-welcome", { method: "POST" });
+      const d = await r.json();
+      setResult(d);
+      setStatus("done");
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white p-5 flex flex-col">
+      <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-amber-50 mb-3 text-lg">✉️</div>
+      <p className="text-sm font-semibold text-slate-900">Welcome Emails</p>
+      <p className="text-xs text-slate-400 mt-1 leading-relaxed flex-1">
+        Send a branded welcome-to-the-finals email to all finalists in the AllowedFinalist table.
+      </p>
+      {status === "done" && result && (
+        <p className="text-xs text-emerald-600 mt-2">{result.sent} sent{result.failed > 0 ? `, ${result.failed} failed` : " ✓"}</p>
+      )}
+      {status === "error" && <p className="text-xs text-red-500 mt-2">Something went wrong.</p>}
+      <button
+        onClick={send}
+        disabled={status === "sending"}
+        className="mt-3 w-full text-xs font-medium py-2 rounded-md bg-amber-100 text-amber-800 hover:bg-amber-200 transition-colors disabled:opacity-50"
+      >
+        {status === "sending" ? "Sending…" : "Send to All Finalists"}
+      </button>
     </div>
   );
 }
