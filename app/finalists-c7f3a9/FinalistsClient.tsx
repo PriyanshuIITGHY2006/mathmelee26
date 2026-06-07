@@ -318,7 +318,7 @@ export default function FinalistsClient() {
       </section>
 
       {/* Monaco gate */}
-      <section className={`${styles.gate} ${allRevealed ? styles.gateVisible : ""}`}>
+      <section className={`${styles.gate} ${styles.gateVisible}`}>
         <div className={styles.gateDivider}>
           <span className={styles.bar} /><span>Entry Protocol</span><span className={styles.bar} />
         </div>
@@ -326,7 +326,7 @@ export default function FinalistsClient() {
         {!submitted ? (
           <>
             <p className={styles.gateDesc}>
-              If your name appears on the path — set the variable to <code>True</code> to enter.
+              Spot your name on the map above — then set the variable to <code>True</code> and enter.
             </p>
             <div className={styles.editorWrap}>
               <div className={styles.editorBar}>
