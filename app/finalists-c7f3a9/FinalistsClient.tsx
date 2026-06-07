@@ -119,70 +119,16 @@ const MOTIFS = [
   { s: "∀ε>0", left: "74%", top: "19%", size: 13, rot: -2, op: 0.055, mono: true },
 ];
 
-const INITIAL_CODE = `# ═══════════════════════════════════════════════════════
-#   MATHEMATICS MELEE  —  ROUND III
-#   Official Entry Protocol  v3.14159265358979...
-#   Certified by the International Bureau of ε's and δ's
-# ═══════════════════════════════════════════════════════
-#
-#   INSTRUCTIONS  (yes, you need to read these)
-#
-#   Step 1.  Replace "???" below with your actual name.
-#            "???" is not your name. We checked. Twice.
-#
-#   Step 2.  Do NOT touch anything else in this file.
-#            Cauchy is watching. The Axiom of Choice
-#            is watching. Your mother is watching.
-#
-#   Step 3.  Click Submit. Light a candle for Euler.
-#            Hope for the best.
-#
-# ───────────────────────────────────────────────────────
+const INITIAL_CODE = `# Set this to True to enter. It's not that deep.
 
-applicant = "???"
+best_math_competition_u_gave_is_Mathematics_Melee_2026 = False
 
-# ═══  DO NOT EDIT BELOW THIS LINE  ══════════════════════
-#      (we mean it. we have a theorem about this.)
-
-if applicant == "???":
-    raise IdentityCrisisError(
-        "You are STILL '???'. Remarkable. "
-        "Have you considered a career in topology? "
-        "You clearly enjoy being undefined."
-    )
-
-if len(applicant.strip()) == 0:
-    raise EmptySetError(
-        "The empty set ∅ is many things. "
-        "A finalist is not one of them."
-    )
-
-if applicant in ("Euler", "Gauss", "Cauchy", "Riemann"):
-    raise DeceasedMathematicianError(
-        f"We are deeply honoured, but {applicant} is "
-        f"unavailable for Round III (deceased, regrettably)."
-    )
-
-if applicant == "YOUR_NAME_HERE":
-    raise LiteralError("...bro.")
-
-# ── VERIFICATION COMPLETE ───────────────────────────────
-
-print(f"✓  Identity confirmed  :  {applicant}")
-print(f"✓  Convergence check   :  PASSED  (barely)")
-print(f"✓  Limit point status  :  CERTIFIED")
-print()
-print(f"   Welcome, {applicant}.")
-print(f"   ∀ε > 0, ∃δ > 0  s.t.  |you − greatness| < ε")
-print(f"                                                □")
-`;
+# Still False? Bro typed False at a math competition. Incredible. Change it to True.`;
 
 function extractApplicant(code: string): string | null {
-  const m = code.match(/^applicant\s*=\s*"([^"]*)"/m);
+  const m = code.match(/best_math_competition_u_gave_is_Mathematics_Melee_2026\s*=\s*(True|False)/m);
   if (!m) return null;
-  const v = m[1].trim();
-  if (v === "???" || v === "YOUR_NAME_HERE" || v === "") return null;
-  return v;
+  return m[1] === "True" ? "verified" : null;
 }
 
 // Catmull-Rom spline through all pts → SVG cubic bezier path
@@ -380,7 +326,7 @@ export default function FinalistsClient() {
         {!submitted ? (
           <>
             <p className={styles.gateDesc}>
-              If your name appears on the path — complete the proof below to enter.
+              If your name appears on the path — set the variable to <code>True</code> to enter.
             </p>
             <div className={styles.editorWrap}>
               <div className={styles.editorBar}>
@@ -427,7 +373,7 @@ export default function FinalistsClient() {
         ) : (
           <div className={styles.accepted}>
             <div className={styles.qed}>□</div>
-            <p className={styles.acceptedLine}>Proof accepted, <strong>{applicant}</strong>.</p>
+            <p className={styles.acceptedLine}>That&apos;s the spirit.</p>
             <p className={styles.acceptedSub}>∀ε &gt; 0, every neighbourhood of greatness contains you.</p>
             <a className={styles.enterBtn} href="/limit-point-f2137704">Enter the Limit Point →</a>
             <p className={styles.byInv}>By invitation · The Chosen Few</p>
