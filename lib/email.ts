@@ -323,3 +323,89 @@ export async function sendOtpEmail(to: string, name: string, otp: string) {
     throw err;
   }
 }
+
+export async function sendWelcomeEmail(to: string, name: string, college: string) {
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Welcome to The Limit Point — Mathematics Melee</title></head>
+<body style="margin:0;padding:0;background:#f4f1ea;-webkit-font-smoothing:antialiased">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f1ea;padding:48px 16px">
+<tr><td align="center">
+<table width="100%" cellpadding="0" cellspacing="0" style="max-width:620px;position:relative">
+
+  <!-- Certificate number -->
+  <tr><td style="text-align:right;padding-bottom:10px">
+    <span style="font-family:monospace;font-size:10px;color:#b3afa4;letter-spacing:0.14em">Mathematics Melee &rsquo;26</span>
+  </td></tr>
+
+  <!-- Main card -->
+  <tr><td style="background:#faf8f4;border:1px solid #e0dbd1;border-radius:4px;padding:52px 60px 44px;position:relative">
+
+    <!-- Math motifs -->
+    <div style="position:absolute;top:28px;left:28px;font-family:Georgia,serif;font-size:44px;color:#1b1a17;opacity:0.055;line-height:1;user-select:none">&Sigma;</div>
+    <div style="position:absolute;top:28px;right:28px;font-family:Georgia,serif;font-size:44px;color:#1b1a17;opacity:0.055;line-height:1;user-select:none">&int;</div>
+    <div style="position:absolute;bottom:80px;left:28px;font-family:Georgia,serif;font-size:28px;color:#1b1a17;opacity:0.04;line-height:1;user-select:none">&pi;</div>
+    <div style="position:absolute;bottom:80px;right:28px;font-family:Georgia,serif;font-size:28px;color:#1b1a17;opacity:0.04;line-height:1;user-select:none">&infin;</div>
+
+    <!-- Logo -->
+    <div style="text-align:center;margin-bottom:14px">
+      <img src="https://mathsmelee.app/logo.jpeg" width="52" height="52" alt="Mathematics Melee" style="border-radius:10px;display:inline-block">
+    </div>
+
+    <!-- Brand name -->
+    <p style="margin:0;text-align:center;font-family:Georgia,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.28em;text-transform:uppercase;color:#1b1a17">Mathematics Melee</p>
+    <p style="margin:4px 0 0;text-align:center;font-family:Georgia,sans-serif;font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:#9a9690">by Polygon &middot; IIT Guwahati</p>
+
+    <!-- Script title -->
+    <p style="margin:8px 0 0;text-align:center;font-family:Georgia,serif;font-size:36px;font-weight:400;color:#1b1a17;font-style:italic;line-height:1.1">The Limit Point</p>
+
+    <!-- Divider label -->
+    <p style="margin:20px 0 28px;text-align:center;font-family:Georgia,sans-serif;font-size:9.5px;letter-spacing:0.34em;text-transform:uppercase;color:#b07d2e">Welcome to the Finals</p>
+
+    <!-- Thin rule -->
+    <div style="width:60px;height:1px;background:#d9d4c9;margin:0 auto 32px"></div>
+
+    <!-- Intro -->
+    <p style="margin:0 0 16px;text-align:center;font-family:Georgia,serif;font-size:14px;color:#6e6b65;font-style:italic">Dear</p>
+
+    <!-- Name -->
+    <p style="margin:0 0 8px;text-align:center;font-family:Georgia,serif;font-size:46px;font-weight:700;color:#1b1a17;line-height:1.05">${name}</p>
+
+    <!-- Name underline -->
+    <div style="width:220px;height:1px;background:#c8c3ba;margin:0 auto 28px"></div>
+
+    <!-- Body -->
+    <p style="margin:0 0 14px;text-align:center;font-family:Georgia,serif;font-size:15px;color:#37352f;line-height:1.75;max-width:440px;margin-left:auto;margin-right:auto">
+      has converged to <span style="color:#b07d2e;font-weight:600">The Limit Point</span> &mdash; the final round of the
+      Mathematics Melee &rsquo;26 Supremum Series &mdash; and is hereby recognised among the
+      <strong>Finalists, the chosen few.</strong>
+    </p>
+
+    <!-- College -->
+    ${college ? `<p style="margin:18px 0 0;text-align:center;font-family:Georgia,sans-serif;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#9a9690">${college}</p>` : ""}
+
+    <!-- Bottom rule -->
+    <div style="width:60px;height:1px;background:#d9d4c9;margin:32px auto 24px"></div>
+
+    <!-- Footer note -->
+    <p style="margin:0;text-align:center;font-family:Georgia,sans-serif;font-size:11px;color:#b3afa4;letter-spacing:0.1em">
+      Summer 2026 &nbsp;&middot;&nbsp; IIT Guwahati &nbsp;&middot;&nbsp; Polygon Mathematics Society
+    </p>
+
+  </td></tr>
+</table>
+</td></tr>
+</table>
+</body></html>`;
+
+  await client.transactionalEmails.sendTransacEmail({
+    to: [{ email: to, name }],
+    sender: {
+      email: process.env.BREVO_FROM_EMAIL ?? "noreply@mathsmelee.app",
+      name: process.env.BREVO_FROM_NAME ?? "Mathematics Melee '26",
+    },
+    subject: `Welcome to The Limit Point — Mathematics Melee '26`,
+    htmlContent: html,
+  });
+}
