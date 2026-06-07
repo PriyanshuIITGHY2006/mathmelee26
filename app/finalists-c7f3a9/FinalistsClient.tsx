@@ -362,11 +362,11 @@ export default function FinalistsClient() {
               onClick={handleSubmit}
               disabled={!canSubmit}
             >
-              {canSubmit ? "Submit Proof  →" : "Replace ??? with your name first"}
+              {canSubmit ? "Enter  →" : "Set it to True first"}
             </button>
             {!canSubmit && (
               <p className={styles.submitHint}>
-                Proof incomplete — <code>applicant = "???"</code> is not a valid identity.
+                Still <code>False</code>? Change it to <code>True</code>.
               </p>
             )}
           </>
